@@ -1461,15 +1461,25 @@ function save(){
 }
 
 let _autoSyncTimer = null;
+let _isDirty = false; // true if local has unpushed changes
+let _isSyncing = false; // prevent concurrent pushes
+
 function scheduleAutoSync(){
-  if(!S.settings.jbKey || !S.settings.jbBinId) return; // not configured
+  if(!S.settings.jbKey || !S.settings.jbBinId) return;
+  _isDirty = true;
   if(_autoSyncTimer) clearTimeout(_autoSyncTimer);
-  _autoSyncTimer = setTimeout(() => { autoSyncPush(); }, 3000); // debounce 3s
+  // Short debounce just to batch rapid edits, but very short
+  _autoSyncTimer = setTimeout(() => { autoSyncPush(); }, 800);
 }
 
 async function autoSyncPush(){
   if(!S.settings.jbKey || !S.settings.jbBinId) return;
+  if(_isSyncing) return; // already pushing
+  if(!_isDirty) return; // nothing to push
+  _isSyncing = true;
   setSyncStatus('syncing');
+  // Snapshot the state we're pushing
+  const stateToPush = JSON.stringify(S);
   try{
     const resp = await fetch(`https://api.jsonbin.io/v3/b/${S.settings.jbBinId}`, {
       method: 'PUT',
@@ -1477,14 +1487,24 @@ async function autoSyncPush(){
         'Content-Type':'application/json',
         'X-Master-Key': S.settings.jbKey,
       },
-      body: JSON.stringify(S)
+      body: stateToPush
     });
     if(!resp.ok) throw new Error('HTTP '+resp.status);
+    _isDirty = false; // successfully pushed
     setSyncStatus('synced');
   } catch(e){
     setSyncStatus('error');
     console.error('Auto-sync push failed:', e.message);
+    // Stays dirty, will retry on next save or focus
+  } finally {
+    _isSyncing = false;
   }
+}
+
+// Force push immediately (used on visibility change / page hide)
+async function forceSyncPush(){
+  if(_autoSyncTimer){ clearTimeout(_autoSyncTimer); _autoSyncTimer = null; }
+  if(_isDirty) await autoSyncPush();
 }
 
 async function autoSyncPull(){
@@ -3238,36 +3258,30 @@ function renderDailyTargets(){
     </div>
   `);
 
-  // Money: daily target = (target - current) / days remaining
-  const sortedP = [...S.portfolio].sort((a,b) => a.ts - b.ts);
-  const currentVal = sortedP[sortedP.length-1]?.value || 5150;
-  const moneyTgt = S.profile.portfolioTarget || 10000;
-  const moneyDate = S.profile.portfolioTargetDate || '2026-08-01';
-  const moneyDaysLeft = Math.max(1, Math.ceil((new Date(moneyDate)-new Date(today))/86400000));
-  const dailyMoneyTgt = Math.max(0, (moneyTgt - currentVal) / moneyDaysLeft);
-  // Today's gain = today's portfolio entry minus yesterday's (if any)
-  const todaysP = sortedP.filter(p => p.date === today);
-  const yesterdaysP = sortedP.filter(p => p.date < today);
-  const lastBeforeToday = yesterdaysP[yesterdaysP.length-1];
-  const lastToday = todaysP[todaysP.length-1];
-  let todayGain = 0;
-  if(lastToday && lastBeforeToday){
-    todayGain = lastToday.value - lastBeforeToday.value;
-  }
-  const moneyDtPct = dailyMoneyTgt > 0 ? Math.min(100, Math.max(0, (todayGain / dailyMoneyTgt) * 100)) : 100;
-  const moneyDtStatus = todayGain >= dailyMoneyTgt ? 'done' : todayGain > 0 ? 'partial' : 'zero';
+  // Sports activity: 1 per day from gym/run/futsal/cardio
+  const todayBody = S.body[today] || {};
+  const todayWeek = getWeekKey(today);
+  const todayGymSession = (S.gymSessions && S.gymSessions[todayWeek])
+    ? Object.entries(S.gymSessions[todayWeek]).find(([k,v]) => v === today)
+    : null;
+  const didCardio = !!todayBody.cardio;
+  const didGym = !!todayBody.gym;
+  const didGymToday = !!todayGymSession;
+  const sportDone = didCardio || didGym || didGymToday;
+  const sportType = didGymToday ? todayGymSession[0] : (didGym ? 'Gym' : (didCardio ? (todayBody.cardioKm ? 'Run/Cardio' : 'Cardio') : null));
+  const sportStatus = sportDone ? 'done' : 'zero';
   cards.push(`
-    <div class="dt-card money">
+    <div class="dt-card body">
       <div class="dt-head">
-        <div class="dt-title">Money · Daily €</div>
-        <div class="dt-status-inline ${moneyDtStatus}">${todayGain >= dailyMoneyTgt ? '✓ Hit' : todayGain > 0 ? 'Partial' : 'No update'}</div>
+        <div class="dt-title">Body · Sport Activity</div>
+        <div class="dt-status-inline ${sportStatus}">${sportDone ? '✓ Done' : 'Not started'}</div>
       </div>
       <div class="dt-bar-row">
         <span class="dt-bar-label">Today</span>
-        <div class="dt-bar-track"><div class="dt-bar-fill" style="width:${moneyDtPct}%"></div></div>
-        <span class="dt-bar-num">${todayGain >= 0 ? '+' : ''}€${todayGain.toFixed(0)} / €${dailyMoneyTgt.toFixed(0)}</span>
+        <div class="dt-bar-track"><div class="dt-bar-fill" style="width:${sportDone ? 100 : 0}%"></div></div>
+        <span class="dt-bar-num">${sportDone ? esc(String(sportType)) : '—'}</span>
       </div>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-top:6px">Note: portfolios don't grow linearly</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-top:6px">Goal: 1× gym, run, or futsal per day</div>
     </div>
   `);
 
@@ -3920,7 +3934,11 @@ function init(){
   // Refresh from cloud when window regains focus (user comes back to tab)
   window.addEventListener('focus', () => {
     if(S.settings.jbKey && S.settings.jbBinId){
-      autoSyncPull().then(updated => {
+      // First, push any pending local changes
+      forceSyncPush().then(() => {
+        // Then pull any newer remote changes
+        return autoSyncPull();
+      }).then(updated => {
         if(updated){
           renderAll();
         }
@@ -3928,10 +3946,29 @@ function init(){
     }
   });
 
+  // Force-push pending changes when tab is hidden (user switches away)
+  // This is critical on iOS Safari where setTimeout gets paused on backgrounding
+  document.addEventListener('visibilitychange', () => {
+    if(document.visibilityState === 'hidden'){
+      // Use sendBeacon-like fallback: just call forceSyncPush
+      // Browser usually allows ~5s of execution before freezing
+      forceSyncPush();
+    } else if(document.visibilityState === 'visible'){
+      // Coming back: pull latest
+      if(S.settings.jbKey && S.settings.jbBinId){
+        autoSyncPull().then(updated => { if(updated) renderAll(); });
+      }
+    }
+  });
+
+  // Also force-push on page unload as last resort
+  window.addEventListener('pagehide', () => { forceSyncPush(); });
+
   // Periodic background sync every 60 seconds while app is open
   setInterval(() => {
     if(document.visibilityState === 'visible' && S.settings.jbKey && S.settings.jbBinId){
-      autoSyncPull().then(updated => {
+      // Push any pending dirty state, then pull
+      forceSyncPush().then(() => autoSyncPull()).then(updated => {
         if(updated) renderAll();
       });
     }
