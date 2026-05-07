@@ -1,0 +1,2885 @@
+<!DOCTYPE html>
+<!--
+==========================================================
+  OTO'S OPERATING SYSTEM — v1.0
+==========================================================
+  4 PILLARS: BODY · SOCIAL · MONEY · CV
+  
+  HOW TO USE:
+  1. Host this file on GitHub Pages (free)
+  2. Open on iPhone in Safari → Share → Add to Home Screen
+  3. Open Settings ⚙️ → add Anthropic API key for AI mentor
+  4. Optional: set up jsonbin.io cloud sync for cross-device data
+  
+  DATA: Stored in localStorage. Use Settings → Export to backup
+  to Google Drive manually.
+==========================================================
+-->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OS">
+<title>OS — Oto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0c0d10;
+  --surface:#16181d;
+  --surface-2:#1d2025;
+  --surface-3:#262a31;
+  --border:#23262d;
+  --border-2:#2f333c;
+  --text:#f4f4f5;
+  --text-2:#9ca3af;
+  --text-3:#5b6068;
+  --accent:#c9f158;
+  --accent-dim:#a3c93f;
+  --body:#fb923c;
+  --social:#f0abfc;
+  --money:#4ade80;
+  --cv:#7dd3fc;
+  --danger:#f87171;
+  --warn:#fbbf24;
+  --r:14px;
+  --r-sm:10px;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Space Grotesk',-apple-system,sans-serif;
+  --mono:'JetBrains Mono','SF Mono',Menlo,monospace;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.2);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.4);
+}
+[data-theme="light"]{
+  --bg:#f8f7f4;
+  --surface:#fff;
+  --surface-2:#f4f3ee;
+  --surface-3:#eae8e0;
+  --border:#e8e6df;
+  --border-2:#d4d1c7;
+  --text:#1a1814;
+  --text-2:#5a564e;
+  --text-3:#a8a496;
+  --accent:#7c9c2a;
+  --accent-dim:#637c20;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.04);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.08);
+}
+html,body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body{font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+
+/* ── LAYOUT ── */
+#app{display:flex;flex-direction:column;min-height:100vh}
+header{
+  padding:14px 18px;padding-top:calc(14px + env(safe-area-inset-top));
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(10,10,10,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;gap:12px;
+}
+[data-theme="light"] header{background:rgba(250,250,249,.85)}
+.h-brand{display:flex;flex-direction:column;gap:2px}
+.h-logo{font-family:var(--serif);font-size:22px;font-weight:400;letter-spacing:-.02em;font-style:italic}
+.h-logo .dot{color:var(--accent);font-style:normal}
+.h-date{font-family:var(--mono);font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em}
+.h-btns{display:flex;gap:6px;align-items:center}
+.icon-btn{
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  border-radius:var(--r);width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:14px;transition:all .15s;
+}
+.icon-btn:hover{background:var(--surface-3);border-color:var(--border-2)}
+.icon-btn:active{transform:scale(.95)}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--text-3);transition:all .3s;flex-shrink:0;margin-right:4px}
+.sync-dot.synced{background:var(--money);box-shadow:0 0 8px rgba(52,211,153,.5)}
+.sync-dot.syncing{background:var(--warn);animation:pulse 1s infinite}
+.sync-dot.error{background:var(--danger)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+main{flex:1;padding:20px 18px calc(80px + env(safe-area-inset-bottom));max-width:920px;margin:0 auto;width:100%}
+.tab{display:none;animation:fadeIn .3s ease}
+.tab.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.sec-title{font-family:var(--serif);font-size:46px;font-weight:400;margin-bottom:6px;letter-spacing:-.035em;line-height:1}
+.sec-sub{font-family:var(--mono);font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.14em;margin-bottom:24px}
+
+/* ── NAV ── */
+nav{
+  position:fixed;bottom:0;left:0;right:0;
+  height:calc(64px + env(safe-area-inset-bottom));
+  padding:8px 8px env(safe-area-inset-bottom);
+  background:rgba(10,10,10,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex;z-index:100;overflow-x:auto;scrollbar-width:none;
+  gap:2px;
+}
+[data-theme="light"] nav{background:rgba(250,250,249,.92)}
+nav::-webkit-scrollbar{display:none}
+.ni{
+  flex:1;min-width:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:6px 4px;cursor:pointer;border:none;background:none;color:var(--text-3);
+  font-size:9px;font-family:var(--mono);font-weight:500;text-transform:uppercase;letter-spacing:.06em;
+  transition:color .2s;border-radius:var(--r);
+}
+.ni .ic{font-size:18px;line-height:1}
+.ni.active{color:var(--accent)}
+.ni:active{background:var(--surface-2)}
+
+/* ── CARDS ── */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;margin-bottom:14px;transition:all .2s;box-shadow:var(--shadow);
+}
+.card:hover{border-color:var(--border-2)}
+.card-pillar{position:relative;overflow:hidden}
+.card-pillar::before{content:'';position:absolute;top:0;left:0;width:100%;height:1px;background:linear-gradient(90deg,var(--pillar-color,var(--accent)),transparent 60%)}
+.card-body{--pillar-color:var(--body)}
+.card-social{--pillar-color:var(--social)}
+.card-money{--pillar-color:var(--money)}
+.card-cv{--pillar-color:var(--cv)}
+
+.ct{
+  font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--text-3);margin-bottom:16px;
+}
+.ct .pill{
+  display:inline-block;padding:2px 8px;border-radius:99px;
+  background:var(--surface-2);color:var(--text-2);margin-left:6px;font-size:9px;
+}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(min-width:720px){.desk-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}}
+
+/* ── STATS ── */
+.stat{
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:16px 14px;text-align:left;position:relative;
+  transition:all .15s;
+}
+.stat:hover{border-color:var(--border-2)}
+.stat-v{font-family:var(--serif);font-size:38px;font-weight:400;line-height:1;letter-spacing:-.025em}
+.stat-v.mono{font-family:var(--mono);font-size:24px;font-weight:600;letter-spacing:-.03em}
+.stat-l{font-family:var(--mono);font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.12em;margin-top:8px}
+.stat-sub{font-size:11px;color:var(--text-2);margin-top:2px}
+.stat.body .stat-v{color:var(--body)}
+.stat.social .stat-v{color:var(--social)}
+.stat.money .stat-v{color:var(--money)}
+.stat.cv .stat-v{color:var(--cv)}
+
+/* ── PROGRESS ── */
+.pw{margin:10px 0}
+.pl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;margin-bottom:6px;color:var(--text-2)}
+.pl .pl-v{color:var(--text);font-weight:500}
+.pb{height:4px;background:var(--surface-2);border-radius:99px;overflow:hidden;border:1px solid var(--border)}
+.pf{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.16,1,.3,1);background:var(--accent)}
+.pf.body{background:var(--body)}
+.pf.social{background:var(--social)}
+.pf.money{background:var(--money)}
+.pf.cv{background:var(--cv)}
+
+/* ── INPUTS ── */
+.fg{margin-bottom:12px}
+.fg label{
+  display:block;font-family:var(--mono);font-size:10px;font-weight:500;
+  color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;
+}
+input,textarea,select{
+  width:100%;padding:11px 13px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r);color:var(--text);font-size:14px;font-family:var(--sans);
+  transition:all .15s;
+}
+input[type="number"]{font-family:var(--mono)}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent);background:var(--surface-3)}
+textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
+.inp-row{display:flex;gap:6px}
+.inp-row input,.inp-row textarea{flex:1}
+.vbtn{
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  border-radius:var(--r);padding:0 14px;cursor:pointer;font-size:16px;transition:all .15s;
+  flex-shrink:0;
+}
+.vbtn:hover{border-color:var(--accent)}
+.vbtn.listening{background:var(--danger);border-color:var(--danger);color:#fff;animation:pulse 1s infinite}
+
+/* ── BUTTONS ── */
+.btn{
+  padding:11px 18px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+  border-radius:var(--r);cursor:pointer;font-size:13px;font-family:var(--sans);font-weight:500;
+  transition:all .15s;letter-spacing:-.01em;
+}
+.btn:hover{border-color:var(--border-2);background:var(--surface-3)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);color:#0a0a0a;border-color:var(--accent);font-weight:600}
+.btn.primary:hover{background:var(--accent-dim);border-color:var(--accent-dim)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--danger);border-color:var(--border)}
+.btn.danger:hover{background:rgba(239,68,68,.1);border-color:var(--danger)}
+.btn.sm{padding:7px 12px;font-size:11px}
+.btn.wf{width:100%}
+.row{display:flex;align-items:center;gap:8px}
+.row.between{justify-content:space-between}
+.gap6{gap:6px}.gap8{gap:8px}.gap12{gap:12px}
+.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}.mb24{margin-bottom:24px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}
+
+/* ── TOGGLES ── */
+.tgl-w{display:flex;align-items:center;cursor:pointer;padding:4px}
+.tgl{width:44px;height:26px;background:var(--surface-3);border:1px solid var(--border);border-radius:99px;position:relative;transition:all .25s}
+.tgl-th{width:20px;height:20px;background:var(--text);border-radius:50%;position:absolute;top:2px;left:2px;transition:all .25s}
+.tgl.on{background:var(--accent);border-color:var(--accent)}
+.tgl.on .tgl-th{left:20px;background:#0a0a0a}
+
+/* ── BADGES & TAGS ── */
+.badge{
+  display:inline-block;padding:3px 8px;border-radius:99px;
+  font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+  background:var(--surface-3);color:var(--text-2);
+}
+.badge.body{background:rgba(255,107,53,.15);color:var(--body)}
+.badge.social{background:rgba(232,121,249,.15);color:var(--social)}
+.badge.money{background:rgba(52,211,153,.15);color:var(--money)}
+.badge.cv{background:rgba(96,165,250,.15);color:var(--cv)}
+.badge.high{background:rgba(239,68,68,.15);color:var(--danger)}
+.badge.med{background:rgba(245,158,11,.15);color:var(--warn)}
+.badge.low{background:rgba(163,163,163,.15);color:var(--text-2)}
+
+/* ── LIST ITEMS ── */
+.li-item{
+  padding:12px 14px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r);margin-bottom:6px;display:flex;align-items:center;gap:10px;
+  transition:all .15s;
+}
+.li-item:hover{border-color:var(--border-2)}
+.li-item .li-main{flex:1;min-width:0}
+.li-item .li-title{font-size:13px;font-weight:500;line-height:1.3}
+.li-item .li-sub{font-family:var(--mono);font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.li-item.done .li-title{text-decoration:line-through;color:var(--text-3)}
+.bdel{background:none;border:none;color:var(--text-3);cursor:pointer;font-size:14px;padding:6px;border-radius:6px;transition:all .15s}
+.bdel:hover{color:var(--danger);background:var(--surface-3)}
+
+/* ── CHECKBOX ── */
+.cb{
+  width:20px;height:20px;border:1.5px solid var(--border-2);border-radius:5px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:all .15s;background:var(--surface-2);
+}
+.cb.on{background:var(--accent);border-color:var(--accent)}
+.cb.on::after{content:'✓';color:#0a0a0a;font-size:13px;font-weight:bold}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--border);margin:14px 0}
+.divider-label{display:flex;align-items:center;gap:10px;margin:18px 0 12px}
+.divider-label::before,.divider-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider-label span{font-family:var(--mono);font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.12em}
+
+/* ── DATE STRIP ── */
+.date-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none}
+.date-strip::-webkit-scrollbar{display:none}
+.date-cell{
+  flex-shrink:0;width:54px;padding:8px 4px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r);text-align:center;cursor:pointer;transition:all .15s;
+}
+.date-cell:hover{border-color:var(--border-2)}
+.date-cell.active{background:var(--accent);border-color:var(--accent);color:#0a0a0a}
+.date-cell.today{border-color:var(--accent)}
+.date-cell.has-data::after{content:'';display:block;width:4px;height:4px;background:var(--accent);border-radius:50%;margin:4px auto 0}
+.date-cell.active.has-data::after{background:#0a0a0a}
+.dc-day{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;opacity:.7}
+.dc-num{font-family:var(--serif);font-size:18px;line-height:1;margin-top:2px}
+
+/* ── CHARTS ── */
+.chart-wrap{position:relative;height:180px;margin-top:8px}
+.spark{height:50px;width:100%}
+
+/* ── CALENDAR ── */
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
+.cal-title{font-family:var(--serif);font-size:24px;font-weight:400;letter-spacing:-.02em;flex:1;text-align:center}
+.cal-nav{
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  width:36px;height:36px;border-radius:var(--r-sm);cursor:pointer;font-size:18px;
+  display:flex;align-items:center;justify-content:center;font-family:var(--sans);
+  transition:all .15s;
+}
+.cal-nav:hover{border-color:var(--border-2);background:var(--surface-3)}
+.cal-dows{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;
+}
+.cal-dows>div{
+  text-align:center;font-family:var(--mono);font-size:9px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--text-3);padding:4px 0;
+}
+.cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
+}
+.cal-cell{
+  aspect-ratio:1;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:6px 4px 4px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:flex-start;
+  position:relative;transition:all .15s;min-height:54px;
+}
+.cal-cell:hover{border-color:var(--border-2);background:var(--surface-3)}
+.cal-cell.other-month{opacity:.3}
+.cal-cell.today{border-color:var(--accent);background:rgba(201,241,88,.06)}
+.cal-cell.today .cal-num{color:var(--accent);font-weight:600}
+.cal-cell.has-events::after{content:'';position:absolute;bottom:4px;right:4px;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.cal-num{
+  font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text-2);line-height:1;
+}
+.cal-dots{
+  display:flex;gap:2px;margin-top:4px;flex-wrap:wrap;align-items:center;
+}
+.cal-dot{
+  width:5px;height:5px;border-radius:50%;display:inline-block;
+}
+.cal-more{
+  font-family:var(--mono);font-size:8px;color:var(--text-3);margin-left:1px;
+}
+.cal-legend{
+  display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:14px;
+  border-top:1px solid var(--border);
+  font-family:var(--mono);font-size:9px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.1em;
+}
+.cal-legend>span{display:flex;align-items:center;gap:5px}
+
+/* ── DAY DETAIL MODAL ── */
+.day-events{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.day-event{
+  background:var(--surface-2);border:1px solid var(--border);border-left-width:3px;
+  border-radius:var(--r-sm);padding:12px 14px;display:flex;align-items:center;gap:10px;
+}
+.day-event.cv,.day-event.study{border-left-color:var(--cv)}
+.day-event.body{border-left-color:var(--body)}
+.day-event.social{border-left-color:var(--social)}
+.day-event.business{border-left-color:var(--money)}
+.day-event.work,.day-event.personal{border-left-color:var(--text-2)}
+.day-event-main{flex:1;min-width:0}
+.day-event-title{font-size:14px;font-weight:500;line-height:1.3}
+.day-event-meta{font-family:var(--mono);font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+.day-event-notes{font-size:12px;color:var(--text-2);margin-top:4px;line-height:1.4}
+
+/* ── MODAL ── */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;
+  align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(8px);
+}
+.modal-bg.open{display:flex;animation:fadeIn .2s ease}
+.modal{
+  background:var(--surface);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;
+  border-radius:16px 16px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--border);
+  animation:slideUp .3s cubic-bezier(.16,1,.3,1);
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-hdl{width:36px;height:4px;background:var(--border-2);border-radius:99px;margin:0 auto 16px}
+.modal-title{font-family:var(--serif);font-size:28px;font-weight:400;margin-bottom:18px;letter-spacing:-.02em}
+
+/* ── INFO BOX ── */
+.info{
+  padding:10px 14px;background:var(--surface-2);border:1px solid var(--border);border-left:2px solid var(--accent);
+  border-radius:var(--r);font-size:12px;color:var(--text-2);margin-bottom:14px;line-height:1.5;
+}
+
+/* ── HOME HERO ── */
+.hero{
+  background:linear-gradient(135deg,var(--surface) 0%,var(--surface-2) 100%);
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:28px 24px;margin-bottom:14px;position:relative;overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.hero::after{
+  content:'';position:absolute;top:-50%;right:-15%;width:380px;height:380px;
+  background:radial-gradient(circle,rgba(201,241,88,.08),transparent 60%);
+  pointer-events:none;
+}
+[data-theme="light"] .hero::after{background:radial-gradient(circle,rgba(124,156,42,.1),transparent 60%)}
+.hero-greet{font-family:var(--serif);font-size:36px;font-weight:400;letter-spacing:-.025em;line-height:1.05;position:relative}
+.hero-greet em{font-style:italic;color:var(--accent)}
+.hero-sub{font-family:var(--mono);font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.12em;margin-top:10px;position:relative}
+
+/* ── PILLAR HOME CARD ── */
+.pillar-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.pillar-card:hover{border-color:var(--border-2);transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.pillar-card::after{
+  content:'';position:absolute;top:-30%;right:-30%;width:140px;height:140px;
+  background:radial-gradient(circle,var(--pcolor,transparent) 0%,transparent 70%);
+  opacity:.08;pointer-events:none;transition:opacity .3s;
+}
+.pillar-card:hover::after{opacity:.15}
+.pillar-card.body{--pcolor:var(--body)}
+.pillar-card.social{--pcolor:var(--social)}
+.pillar-card.money{--pcolor:var(--money)}
+.pillar-card.cv{--pcolor:var(--cv)}
+.pillar-card .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;position:relative}
+.pillar-card .pname{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em}
+.pillar-card .pname.body{color:var(--body)}
+.pillar-card .pname.social{color:var(--social)}
+.pillar-card .pname.money{color:var(--money)}
+.pillar-card .pname.cv{color:var(--cv)}
+.pillar-card .pscore{font-family:var(--serif);font-size:42px;font-weight:400;line-height:1;letter-spacing:-.025em;position:relative}
+.pillar-card .pdesc{font-family:var(--mono);font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em;margin-top:10px;position:relative}
+
+/* ── CHAT ── */
+.chat-wrap{display:flex;flex-direction:column;gap:10px;height:calc(100vh - 280px);min-height:400px}
+.chat-msgs{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:10px}
+.msg{padding:11px 14px;border-radius:12px;max-width:85%;font-size:13px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
+.msg-user{background:var(--accent);color:#0a0a0a;align-self:flex-end;border-bottom-right-radius:4px}
+.msg-mentor{background:var(--surface-2);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px}
+.msg-sys{background:transparent;color:var(--text-3);text-align:center;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;align-self:center;max-width:100%}
+.chat-input-row{display:flex;gap:6px;align-items:center;padding:8px 0 0;border-top:1px solid var(--border)}
+.chat-input-row input{flex:1}
+.send-btn{
+  background:var(--accent);color:#0a0a0a;border:none;border-radius:var(--r);
+  padding:0 16px;height:42px;cursor:pointer;font-size:16px;font-weight:600;flex-shrink:0;
+}
+.send-btn:hover{background:var(--accent-dim)}
+.typing{padding:11px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;align-self:flex-start;display:flex;gap:4px}
+.typing span{width:6px;height:6px;background:var(--text-3);border-radius:50%;animation:bounce 1.4s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
+  background:var(--surface);border:1px solid var(--border-2);color:var(--text);
+  padding:10px 18px;border-radius:99px;font-size:13px;font-weight:500;
+  opacity:0;transition:opacity .3s;pointer-events:none;z-index:1100;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+}
+
+/* ── SLIDER ── */
+.slider-wrap{display:flex;align-items:center;gap:12px}
+.slider-wrap input[type="range"]{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--surface-3);border-radius:99px;border:none;padding:0}
+.slider-wrap input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:var(--accent);border-radius:50%;cursor:pointer;border:2px solid var(--bg)}
+.slider-wrap input[type="range"]::-moz-range-thumb{width:20px;height:20px;background:var(--accent);border-radius:50%;cursor:pointer;border:2px solid var(--bg)}
+.slider-val{font-family:var(--mono);font-size:18px;font-weight:600;min-width:40px;text-align:right}
+
+/* ── EMPTY STATE ── */
+.empty{
+  text-align:center;padding:32px 18px;color:var(--text-3);
+  font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;
+}
+
+/* ── DELTA ── */
+.delta{font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;display:inline-block}
+.delta.up{background:rgba(52,211,153,.15);color:var(--money)}
+.delta.down{background:rgba(239,68,68,.15);color:var(--danger)}
+
+/* ── DESKTOP TWEAKS ── */
+@media(min-width:720px){
+  .sec-title{font-size:54px}
+  main{padding:32px 24px calc(80px + env(safe-area-inset-bottom))}
+  .hero-greet{font-size:42px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<header>
+  <div class="h-brand">
+    <div class="h-logo">oto<span class="dot">.</span><em>os</em></div>
+    <div class="h-date" id="hdr-date"></div>
+  </div>
+  <div class="h-btns">
+    <span class="sync-dot" id="sync-dot" title="Sync status" onclick="syncNow()"></span>
+    <button class="icon-btn" onclick="toggleTheme()" title="Theme">◐</button>
+    <button class="icon-btn" onclick="openModal('settings-modal')" title="Settings">⚙</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══════════════ HOME / OVERVIEW ═══════════════ -->
+<section id="tab-overview" class="tab active">
+  <div class="hero">
+    <div class="hero-greet" id="hero-greet">Good evening, <em>Oto</em>.</div>
+    <div class="hero-sub" id="hero-sub">Loading day briefing…</div>
+  </div>
+
+  <div class="g2 mb12">
+    <div class="pillar-card body" onclick="switchTab('body')">
+      <div class="ph"><span class="pname body">Body</span><span class="badge body" id="ph-body-streak">0d</span></div>
+      <div class="pscore" id="ph-body-score" style="color:var(--body)">—</div>
+      <div class="pdesc" id="ph-body-desc">No log today</div>
+    </div>
+    <div class="pillar-card social" onclick="switchTab('social')">
+      <div class="ph"><span class="pname social">Social</span><span class="badge social" id="ph-social-streak">0d</span></div>
+      <div class="pscore" id="ph-social-score" style="color:var(--social)">—</div>
+      <div class="pdesc" id="ph-social-desc">No log today</div>
+    </div>
+    <div class="pillar-card money" onclick="switchTab('money')">
+      <div class="ph"><span class="pname money">Money</span><span class="badge money" id="ph-money-trend">—</span></div>
+      <div class="pscore" id="ph-money-score" style="color:var(--money)">€—</div>
+      <div class="pdesc" id="ph-money-desc">Portfolio</div>
+    </div>
+    <div class="pillar-card money" onclick="switchTab('business')">
+      <div class="ph"><span class="pname money">Business</span><span class="badge money" id="ph-biz-streak">0d</span></div>
+      <div class="pscore" id="ph-biz-score" style="color:var(--money)">—</div>
+      <div class="pdesc" id="ph-biz-desc">0h on business</div>
+    </div>
+    <div class="pillar-card cv" onclick="switchTab('cv')" style="grid-column:1 / -1">
+      <div class="ph"><span class="pname cv">CV</span><span class="badge cv" id="ph-cv-streak">0d</span></div>
+      <div class="pscore" id="ph-cv-score" style="color:var(--cv)">—</div>
+      <div class="pdesc" id="ph-cv-desc">0 problems</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">7-Day Trajectory</div>
+    <canvas id="overview-chart" class="chart-wrap"></canvas>
+  </div>
+
+  <div class="card">
+    <div class="ct">Today's Focus</div>
+    <div id="today-tasks"><div class="empty">No tasks for today</div></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Upcoming Milestones</div>
+    <div id="upcoming-milestones"><div class="empty">No upcoming milestones</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ BODY ═══════════════ -->
+<section id="tab-body" class="tab">
+  <div class="sec-title">Body</div>
+  <div class="sec-sub">Goal: 78–80kg lean · Endurance · Health metrics</div>
+
+  <div class="date-strip" id="body-date-strip"></div>
+
+  <div class="desk-grid">
+    <div>
+      <div class="card card-pillar card-body">
+        <div class="ct">Today's Stats</div>
+        <div class="g3">
+          <div class="stat body"><div class="stat-v mono" id="b-weight">—</div><div class="stat-l">Weight kg</div></div>
+          <div class="stat body"><div class="stat-v mono" id="b-cal">0</div><div class="stat-l">Cal / 3000</div></div>
+          <div class="stat body"><div class="stat-v mono" id="b-prot">0</div><div class="stat-l">Protein g</div></div>
+        </div>
+        <div class="pw mt12"><div class="pl"><span>Calories</span><span class="pl-v" id="b-cal-pl">0 / 3000</span></div><div class="pb"><div class="pf body" id="b-cal-pf" style="width:0%"></div></div></div>
+        <div class="pw"><div class="pl"><span>Protein</span><span class="pl-v" id="b-prot-pl">0g / 180g</span></div><div class="pb"><div class="pf body" id="b-prot-pf" style="width:0%"></div></div></div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Quick Log</div>
+        <div class="fg"><label>Weight (kg)</label><input type="number" id="b-weight-in" step="0.1" placeholder="—"></div>
+        <div class="g2">
+          <div class="fg"><label>Sleep (h)</label><input type="number" id="b-sleep-in" step="0.5" placeholder="—"></div>
+          <div class="fg"><label>Water (L)</label><input type="number" id="b-water-in" step="0.5" placeholder="—"></div>
+        </div>
+        <button class="btn primary wf" onclick="saveBodyDaily()">Save daily metrics</button>
+      </div>
+
+      <div class="card">
+        <div class="ct">🎙 AI Meal Logger <span class="pill">voice → macros</span></div>
+        <div class="info">Tap mic, say everything you ate (e.g. "two eggs, oatmeal with banana, protein shake, chicken salad with rice for lunch"). AI extracts macros and logs each meal automatically.</div>
+        <div class="fg"><label>Describe what you ate</label><div class="inp-row"><textarea id="b-ai-meal" rows="3" placeholder="Speak or type all your meals…"></textarea><button class="vbtn" id="b-ai-mic" onclick="voiceInput('b-ai-meal',this)">🎙</button></div></div>
+        <button class="btn primary wf" onclick="aiLogMeals()" id="b-ai-btn">⚡ Calculate &amp; log meals</button>
+      </div>
+
+      <div class="card">
+        <div class="ct">Manual Add Meal</div>
+        <div class="fg"><label>Meal</label><input type="text" id="b-meal-name" placeholder="e.g. Chicken &amp; rice"></div>
+        <div class="g2">
+          <div class="fg"><label>Calories</label><input type="number" id="b-meal-cal" placeholder="0"></div>
+          <div class="fg"><label>Protein (g)</label><input type="number" id="b-meal-prot" placeholder="0"></div>
+        </div>
+        <button class="btn wf" onclick="addMeal()">Log meal</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="ct">Training Today</div>
+        <div class="row between mb12">
+          <div><div style="font-weight:600">💪 Gym</div><div class="stat-l" style="margin-top:2px">Did you train?</div></div>
+          <div class="tgl-w" onclick="toggleBody('gym')"><div class="tgl" id="b-gym-tgl"><div class="tgl-th"></div></div></div>
+        </div>
+        <div id="b-gym-notes-sec" style="display:none" class="fg"><label>Notes</label><div class="inp-row"><textarea id="b-gym-notes" rows="2" placeholder="Push day, bench 80kg…"></textarea><button class="vbtn" onclick="voiceInput('b-gym-notes',this)">🎙</button></div></div>
+        <div class="divider"></div>
+        <div class="row between mb12">
+          <div><div style="font-weight:600">🏃 Run / Futsal</div><div class="stat-l" style="margin-top:2px">Cardio session</div></div>
+          <div class="tgl-w" onclick="toggleBody('cardio')"><div class="tgl" id="b-cardio-tgl"><div class="tgl-th"></div></div></div>
+        </div>
+        <div id="b-cardio-sec" style="display:none">
+          <div class="g2">
+            <div class="fg"><label>Distance (km)</label><input type="number" id="b-cardio-km" step="0.1" placeholder="0"></div>
+            <div class="fg"><label>Duration (min)</label><input type="number" id="b-cardio-min" placeholder="0"></div>
+          </div>
+        </div>
+        <button class="btn primary wf mt8" onclick="saveBodyTraining()">Save training</button>
+      </div>
+
+      <div class="card">
+        <div class="ct">Today's Meals</div>
+        <div id="b-meals-list"><div class="empty">No meals logged</div></div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Weight Trend (30d)</div>
+        <canvas id="body-weight-chart" class="chart-wrap"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SOCIAL ═══════════════ -->
+<section id="tab-social" class="tab">
+  <div class="sec-title">Social</div>
+  <div class="sec-sub">Goal: High social skills · Network · Dating</div>
+
+  <div class="date-strip" id="social-date-strip"></div>
+
+  <div class="desk-grid">
+    <div>
+      <div class="card card-pillar card-social">
+        <div class="ct">Today</div>
+        <div class="g4">
+          <div class="stat social"><div class="stat-v" id="s-score">—</div><div class="stat-l">Rating /10</div></div>
+          <div class="stat social"><div class="stat-v mono" id="s-approaches">0</div><div class="stat-l">Approaches</div></div>
+          <div class="stat social"><div class="stat-v mono" id="s-compliments">0</div><div class="stat-l">Compliments</div></div>
+          <div class="stat social"><div class="stat-v mono" id="s-conn">0</div><div class="stat-l">New conn</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Daily Log</div>
+        <div class="info">Rate how well you exploited social opportunities today (1 = avoided, 10 = max effort)</div>
+        <div class="slider-wrap mb16">
+          <input type="range" id="s-rating-slider" min="0" max="10" step="1" value="5" oninput="document.getElementById('s-rating-val').textContent=this.value">
+          <div class="slider-val" id="s-rating-val">5</div>
+        </div>
+        <div class="g3">
+          <div class="fg"><label>Approaches</label><input type="number" id="s-approach-in" placeholder="0" min="0"></div>
+          <div class="fg"><label>Compliments</label><input type="number" id="s-compl-in" placeholder="0" min="0"></div>
+          <div class="fg"><label>New connections</label><input type="number" id="s-conn-in" placeholder="0" min="0"></div>
+        </div>
+        <button class="btn primary wf" onclick="saveSocial()">Save log</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="ct">7-Day Rating Trend</div>
+        <canvas id="social-chart" class="chart-wrap"></canvas>
+      </div>
+
+      <div class="card">
+        <div class="ct">Weekly Totals</div>
+        <div class="g2">
+          <div class="stat social"><div class="stat-v mono" id="s-wk-approach">0</div><div class="stat-l">Approaches</div></div>
+          <div class="stat social"><div class="stat-v mono" id="s-wk-compl">0</div><div class="stat-l">Compliments</div></div>
+          <div class="stat social"><div class="stat-v mono" id="s-wk-conn">0</div><div class="stat-l">Connections</div></div>
+          <div class="stat social"><div class="stat-v mono" id="s-wk-avg">—</div><div class="stat-l">Avg rating</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ MONEY (NET WORTH) ═══════════════ -->
+<section id="tab-money" class="tab">
+  <div class="sec-title">Money</div>
+  <div class="sec-sub">Net worth · Portfolio tracking</div>
+
+  <div class="desk-grid">
+    <div>
+      <div class="card card-pillar card-money">
+        <div class="ct">Net Worth <span class="pill" id="m-portfolio-trend">—</span></div>
+        <div class="g2">
+          <div class="stat money"><div class="stat-v mono" id="m-portfolio-val">€—</div><div class="stat-l">Portfolio</div></div>
+          <div class="stat money"><div class="stat-v mono" id="m-portfolio-delta">—</div><div class="stat-l">vs last entry</div></div>
+        </div>
+        <div class="row gap8 mt12">
+          <button class="btn primary" style="flex:2" onclick="syncT212()" id="t212-sync-btn">⟳ Sync from Trading 212</button>
+        </div>
+        <div class="fg mt12"><label>Or update manually (€)</label>
+          <div class="inp-row">
+            <input type="number" id="m-port-in" step="0.01" placeholder="e.g. 8420.50">
+            <button class="btn" onclick="logPortfolio()">Save</button>
+          </div>
+        </div>
+        <div class="info" style="margin-bottom:0;font-size:11px" id="t212-status">Set up the Trading 212 proxy in Settings ⚙ to enable auto-sync.</div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Lifetime Stats</div>
+        <div class="g3">
+          <div class="stat money"><div class="stat-v mono" id="m-port-entries">0</div><div class="stat-l">Entries</div></div>
+          <div class="stat money"><div class="stat-v mono" id="m-port-high">€—</div><div class="stat-l">All-time high</div></div>
+          <div class="stat money"><div class="stat-v mono" id="m-port-growth">—</div><div class="stat-l">Total growth</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="ct">Portfolio Trend</div>
+        <canvas id="portfolio-chart" class="chart-wrap"></canvas>
+      </div>
+
+      <div class="card">
+        <div class="ct">Entry History</div>
+        <div id="m-port-history"><div class="empty">No entries yet</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ BUSINESS ═══════════════ -->
+<section id="tab-business" class="tab">
+  <div class="sec-title">Business</div>
+  <div class="sec-sub">Goal: €4k+/mo business · Escape office work · Idea TBD in 2-3 months</div>
+
+  <div class="date-strip" id="business-date-strip"></div>
+
+  <div class="desk-grid">
+    <div>
+      <div class="card card-pillar card-money">
+        <div class="ct">Today</div>
+        <div class="g3">
+          <div class="stat money"><div class="stat-v mono" id="biz-hours">0.0</div><div class="stat-l">Hours / 2.0</div></div>
+          <div class="stat money"><div class="stat-v mono" id="biz-week">0</div><div class="stat-l">Wk hours</div></div>
+          <div class="stat money"><div class="stat-v mono" id="biz-ideas">0</div><div class="stat-l">Total ideas</div></div>
+        </div>
+        <div class="pw mt12"><div class="pl"><span>Daily target (2h)</span><span class="pl-v" id="biz-hours-pl">0h / 2h</span></div><div class="pb"><div class="pf money" id="biz-hours-pf" style="width:0%"></div></div></div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Log Business Time</div>
+        <div class="g2">
+          <div class="fg"><label>Hours today</label><input type="number" id="biz-hours-in" step="0.25" placeholder="0.0" min="0"></div>
+          <div class="fg"><label>Type</label><select id="biz-type"><option value="research">🔍 Research</option><option value="building">🔨 Building</option><option value="learning">📚 Learning</option><option value="outreach">🤝 Outreach</option></select></div>
+        </div>
+        <div class="fg"><label>What did you work on?</label><div class="inp-row"><textarea id="biz-notes" rows="2" placeholder="Read about agency models, drafted offer for…"></textarea><button class="vbtn" onclick="voiceInput('biz-notes',this)">🎙</button></div></div>
+        <button class="btn primary wf" onclick="saveBusiness()">Log time</button>
+      </div>
+
+      <div class="card">
+        <div class="ct">Capture Business Idea</div>
+        <div class="fg"><label>Idea</label><div class="inp-row"><input type="text" id="biz-idea-title" placeholder="One-line idea"><button class="vbtn" onclick="voiceInput('biz-idea-title',this)">🎙</button></div></div>
+        <div class="fg"><label>Why interesting / who pays</label><div class="inp-row"><textarea id="biz-idea-notes" rows="2" placeholder="Target customer, problem solved…"></textarea><button class="vbtn" onclick="voiceInput('biz-idea-notes',this)">🎙</button></div></div>
+        <button class="btn primary wf" onclick="addIdea()">Save idea</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="ct">Idea Bank <span class="pill" id="biz-ideas-count">0</span></div>
+        <div id="biz-ideas-list"><div class="empty">No ideas captured yet</div></div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Business Hours / Day (last 14)</div>
+        <canvas id="business-chart" class="chart-wrap"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CV ═══════════════ -->
+<section id="tab-cv" class="tab">
+  <div class="sec-title">CV</div>
+  <div class="sec-sub">Goal: HEC Paris MFin · Standout internship stack</div>
+
+  <div class="date-strip" id="cv-date-strip"></div>
+
+  <div class="desk-grid">
+    <div>
+      <div class="card card-pillar card-cv">
+        <div class="ct">GMAT Today</div>
+        <div class="g3">
+          <div class="stat cv"><div class="stat-v mono" id="c-ttp-prob">0</div><div class="stat-l">Problems</div></div>
+          <div class="stat cv"><div class="stat-v mono" id="c-ttp-acc">—</div><div class="stat-l">Accuracy %</div></div>
+          <div class="stat cv"><div class="stat-v mono" id="c-ttp-time">0</div><div class="stat-l">Min studied</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Log GMAT Session</div>
+        <div class="g2">
+          <div class="fg"><label>Problems solved</label><input type="number" id="c-ttp-p-in" placeholder="0" min="0"></div>
+          <div class="fg"><label>Correct</label><input type="number" id="c-ttp-c-in" placeholder="0" min="0"></div>
+        </div>
+        <div class="g2">
+          <div class="fg"><label>Time (min)</label><input type="number" id="c-ttp-t-in" placeholder="0" min="0"></div>
+          <div class="fg"><label>Topic</label><input type="text" id="c-ttp-topic-in" placeholder="e.g. PS — Algebra"></div>
+        </div>
+        <button class="btn primary wf" onclick="saveGMAT()">Log session</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="ct">Active CV Goals <span class="pill" id="cv-goals-count">0</span></div>
+        <div id="cv-goals-list"><div class="empty">No active CV goals — add one below</div></div>
+        <div class="divider"></div>
+        <div class="fg"><label>New CV milestone</label><div class="inp-row"><input type="text" id="c-goal-title" placeholder="e.g. Finalize PwC contract"><button class="vbtn" onclick="voiceInput('c-goal-title',this)">🎙</button></div></div>
+        <div class="g2">
+          <div class="fg"><label>Deadline</label><input type="date" id="c-goal-date"></div>
+          <div class="fg"><label>Priority</label><select id="c-goal-pri"><option value="high">🔴 High</option><option value="med">🟡 Medium</option><option value="low">🟢 Low</option></select></div>
+        </div>
+        <button class="btn primary wf" onclick="addCVGoal()">Add milestone</button>
+      </div>
+
+      <div class="card">
+        <div class="ct">GMAT Accuracy Trend (30d)</div>
+        <canvas id="cv-chart" class="chart-wrap"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PLAN ═══════════════ -->
+<section id="tab-plan" class="tab">
+  <div class="sec-title">Plan</div>
+  <div class="sec-sub">Voice → AI → calendar</div>
+
+  <div class="card card-pillar card-cv">
+    <div class="ct">🎙 AI Event Capture <span class="pill">voice → calendar</span></div>
+    <div class="info">Tap mic, describe what's coming up. Multiple events at once is fine. AI extracts date/time/category and adds to your calendar.</div>
+    <div class="fg"><label>What's planned?</label><div class="inp-row"><textarea id="plan-ai-text" rows="3" placeholder="e.g. Meeting with PwC HR next Tuesday at 2pm, gym Friday morning, dinner with Gabriel Saturday 8pm…"></textarea><button class="vbtn" id="plan-ai-mic" onclick="voiceInput('plan-ai-text',this)">🎙</button></div></div>
+    <button class="btn primary wf" id="plan-ai-btn" onclick="aiAddEvents()">⚡ Parse &amp; add to calendar</button>
+  </div>
+
+  <div class="card">
+    <div class="cal-hdr">
+      <button class="cal-nav" onclick="changeCalMonth(-1)">‹</button>
+      <div class="cal-title" id="cal-title"></div>
+      <button class="cal-nav" onclick="changeCalMonth(1)">›</button>
+    </div>
+    <div class="cal-dows">
+      <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-legend">
+      <span><span class="cal-dot" style="background:var(--cv)"></span>CV</span>
+      <span><span class="cal-dot" style="background:var(--text-2)"></span>Work</span>
+      <span><span class="cal-dot" style="background:var(--cv)"></span>Study</span>
+      <span><span class="cal-dot" style="background:var(--body)"></span>Body</span>
+      <span><span class="cal-dot" style="background:var(--social)"></span>Social</span>
+      <span><span class="cal-dot" style="background:var(--money)"></span>Biz</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Upcoming <span class="pill" id="plan-upcoming-count">0</span></div>
+    <div id="plan-upcoming-list"><div class="empty">No upcoming events</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ MENTOR ═══════════════ -->
+<section id="tab-mentor" class="tab">
+  <div class="sec-title">Mentor</div>
+  <div class="sec-sub">AI mentor — knows your full state, today's logs, all goals</div>
+
+  <div id="no-key-banner" class="info" style="display:none">⚠ Add your Anthropic API key in Settings ⚙ to enable the mentor</div>
+
+  <div class="card">
+    <div class="chat-wrap">
+      <div class="chat-msgs" id="chat-msgs">
+        <div class="msg msg-sys">Mentor loaded with your profile, goals, and today's data</div>
+      </div>
+      <div class="chat-input-row">
+        <button class="vbtn" id="voice-chat" onclick="voiceChat()">🎙</button>
+        <input type="text" id="chat-inp" placeholder="Ask your mentor anything…" onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="send-btn" onclick="sendChat()">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Quick Prompts</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <button class="btn ghost wf" style="text-align:left" onclick="quickPrompt('Review my last 7 days across all 4 pillars and tell me where I am slipping. Be direct.')">📊 7-day honest review</button>
+      <button class="btn ghost wf" style="text-align:left" onclick="quickPrompt('Based on my current data, what are the 3 highest-leverage things I should do today?')">🎯 Top 3 priorities today</button>
+      <button class="btn ghost wf" style="text-align:left" onclick="quickPrompt('Push back on my plan. What am I rationalizing or avoiding right now?')">⚡ Push back on me</button>
+      <button class="btn ghost wf" style="text-align:left" onclick="quickPrompt('Help me brainstorm business ideas based on my skills, network, and what I have been logging.')">💡 Business idea sprint</button>
+      <button class="btn ghost wf" style="text-align:left" onclick="quickPrompt('What is my GMAT trajectory? At current pace, when do I hit 750+?')">📈 GMAT trajectory analysis</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<nav>
+  <button class="ni active" id="nav-overview" onclick="switchTab('overview')"><span class="ic">◉</span><span>Home</span></button>
+  <button class="ni" id="nav-body" onclick="switchTab('body')"><span class="ic">⏵</span><span>Body</span></button>
+  <button class="ni" id="nav-social" onclick="switchTab('social')"><span class="ic">◊</span><span>Social</span></button>
+  <button class="ni" id="nav-money" onclick="switchTab('money')"><span class="ic">€</span><span>Money</span></button>
+  <button class="ni" id="nav-business" onclick="switchTab('business')"><span class="ic">⌘</span><span>Biz</span></button>
+  <button class="ni" id="nav-cv" onclick="switchTab('cv')"><span class="ic">▲</span><span>CV</span></button>
+  <button class="ni" id="nav-plan" onclick="switchTab('plan')"><span class="ic">◐</span><span>Plan</span></button>
+  <button class="ni" id="nav-mentor" onclick="switchTab('mentor')"><span class="ic">✦</span><span>Mentor</span></button>
+</nav>
+
+<!-- ═══════════════ SETTINGS MODAL ═══════════════ -->
+<div class="modal-bg" id="settings-modal" onclick="bgClose(event,'settings-modal')">
+  <div class="modal">
+    <div class="modal-hdl"></div>
+    <div class="modal-title">Settings</div>
+
+    <div class="ct">Profile</div>
+    <div class="g2">
+      <div class="fg"><label>Name</label><input type="text" id="set-name" value="Oto"></div>
+      <div class="fg"><label>Current weight (kg)</label><input type="number" id="set-weight" value="74" step="0.1"></div>
+    </div>
+    <div class="g2">
+      <div class="fg"><label>Target weight (kg)</label><input type="number" id="set-target-weight" value="79"></div>
+      <div class="fg"><label>Daily calorie target</label><input type="number" id="set-cal" value="3000"></div>
+    </div>
+    <div class="g2">
+      <div class="fg"><label>Daily protein target (g)</label><input type="number" id="set-prot" value="180"></div>
+      <div class="fg"><label>Business hours/day target</label><input type="number" id="set-biz" value="2" step="0.5"></div>
+    </div>
+    <button class="btn primary wf mb16" onclick="saveSettings()">Save profile</button>
+
+    <div class="ct">AI Mentor</div>
+    <div class="info">Get your key at console.anthropic.com — stored locally only</div>
+    <div class="fg"><label>Anthropic API Key</label><input type="password" id="set-apikey" placeholder="sk-ant-…"></div>
+    <button class="btn primary wf mb16" onclick="saveApiKey()">Save key</button>
+
+    <div class="ct">Trading 212 Auto-Sync</div>
+    <div class="info">Connect your Cloudflare Worker proxy to fetch portfolio value automatically. Your T212 API key lives in the worker — never here, never in the code.</div>
+    <div class="fg"><label>Worker URL</label><input type="text" id="set-t212-url" placeholder="https://your-worker.workers.dev"></div>
+    <div class="fg"><label>Proxy Secret (must match worker's PROXY_SECRET)</label><input type="password" id="set-t212-secret" placeholder="The random string you set in the worker"></div>
+    <div class="row gap8 mb16">
+      <button class="btn primary" style="flex:1" onclick="saveT212Config()">Save</button>
+      <button class="btn" style="flex:1" onclick="testT212()">Test connection</button>
+    </div>
+
+    <div class="ct">Cloud Sync (jsonbin.io)</div>
+    <div class="info">For cross-device sync. Free at jsonbin.io. Get Master Key from your account → API Keys</div>
+    <div class="fg"><label>jsonbin Master Key</label><input type="password" id="set-jbkey" placeholder="$2a$…"></div>
+    <div class="fg"><label>Bin ID (auto-created on first sync)</label><input type="text" id="set-jbbin" placeholder="auto"></div>
+    <div class="row gap8 mb16">
+      <button class="btn primary" style="flex:1" onclick="syncNow()">⇅ Backup now</button>
+      <button class="btn" style="flex:1" onclick="syncRestore()">⇊ Restore</button>
+    </div>
+
+    <div class="ct">Data</div>
+    <div class="row gap8 mb16">
+      <button class="btn" style="flex:1" onclick="exportData()">📤 Export JSON</button>
+      <button class="btn" style="flex:1" onclick="importData()">📥 Import JSON</button>
+    </div>
+    <button class="btn danger wf mb16" onclick="if(confirm('Reset ALL data? This cannot be undone.')){localStorage.removeItem(STORE_KEY);location.reload()}">⚠ Reset all data</button>
+
+    <button class="btn ghost wf" onclick="closeModal('settings-modal')">Close</button>
+  </div>
+</div>
+
+<!-- ═══════════════ DAY DETAIL MODAL ═══════════════ -->
+<div class="modal-bg" id="day-modal" onclick="bgClose(event,'day-modal')">
+  <div class="modal">
+    <div class="modal-hdl"></div>
+    <div class="modal-title" id="day-modal-title">Day</div>
+    <div class="day-events" id="day-events-list"></div>
+    <button class="btn ghost wf" onclick="closeModal('day-modal')">Close</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ═══════════════ GOAL DESCRIPTION MODAL ═══════════════ -->
+<div class="modal-bg" id="goal-desc-modal" onclick="bgClose(event,'goal-desc-modal')">
+  <div class="modal">
+    <div class="modal-hdl"></div>
+    <div class="modal-title" id="goal-desc-title">Goal</div>
+    <div id="goal-desc-meta" style="font-family:var(--mono);font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:18px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
+    <div id="goal-desc-body" style="font-size:14px;line-height:1.65;color:var(--text-2);margin-bottom:16px;white-space:pre-wrap"></div>
+    <div id="goal-desc-status" style="font-family:var(--mono);font-size:11px;color:var(--money);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px"></div>
+    <button class="btn ghost wf" onclick="closeModal('goal-desc-modal')">Close</button>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+const STORE_KEY = 'oto_os_v1';
+const TODAY = () => new Date().toISOString().slice(0,10);
+const NOW = () => Date.now();
+
+const DEFAULT_STATE = {
+  profile: { name:'Oto', weight:74, targetWeight:79, calTarget:3000, protTarget:180, bizTarget:2 },
+  settings: { theme:'dark', apiKey:'', jbKey:'', jbBinId:'', t212ProxyUrl:'', t212ProxySecret:'' },
+  // Daily logs keyed by date (YYYY-MM-DD)
+  body: {},   // { date: { weight, sleep, water, gym, gymNotes, cardio, cardioKm, cardioMin } }
+  meals: {},  // { date: [ {id, name, cal, prot, ts} ] }
+  social: {}, // { date: { rating, approaches, compliments, connections, notes } }
+  money: {},  // { date: { hours, type, notes } }
+  cv: {},     // { date: { problems, correct, time, topic, linkedin, calls, netNotes } }
+  contacts: [], // [ {id, name, type, source, ts} ]
+  ideas: [],    // [ {id, title, notes, ts} ]
+  portfolio: [], // [ {date, value, ts} ]
+  cvGoals: [],  // [ {id, title, deadline, priority, done, ts} ]
+  events: [],   // [ {id, title, date, time, category, notes, ts} ]
+  chat: [],
+  selectedDate: { body:'', social:'', money:'', business:'', cv:'' },
+};
+
+let S = loadState();
+let activeTab = 'overview';
+let activeRec = null;
+let charts = {};
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
+    const loaded = JSON.parse(raw);
+    return deepMerge(JSON.parse(JSON.stringify(DEFAULT_STATE)), loaded);
+  }catch(e){
+    console.error('Load failed', e);
+    return JSON.parse(JSON.stringify(DEFAULT_STATE));
+  }
+}
+function deepMerge(target, source){
+  for(const k in source){
+    if(source[k] && typeof source[k]==='object' && !Array.isArray(source[k])){
+      target[k] = deepMerge(target[k]||{}, source[k]);
+    } else {
+      target[k] = source[k];
+    }
+  }
+  return target;
+}
+function save(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }
+  catch(e){ toast('Save failed: '+e.message, 'err'); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+function pct(v,t){ return t>0 ? Math.min(100, (v/t)*100) : 0; }
+function fmtDate(ds){
+  if(!ds) return '';
+  const d = new Date(ds+'T12:00:00');
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+function getNDaysBack(n){
+  const out = [];
+  for(let i=n-1; i>=0; i--){
+    const d = new Date();
+    d.setDate(d.getDate()-i);
+    out.push(d.toISOString().slice(0,10));
+  }
+  return out;
+}
+function dayName(ds){
+  return new Date(ds+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}).toUpperCase();
+}
+function dayNum(ds){
+  return new Date(ds+'T12:00:00').getDate();
+}
+
+let toastTm;
+function toast(msg, type){
+  const el = $('toast');
+  el.textContent = msg;
+  el.style.opacity = '1';
+  if(type==='err') el.style.borderColor = 'var(--danger)';
+  else el.style.borderColor = 'var(--border-2)';
+  clearTimeout(toastTm);
+  toastTm = setTimeout(()=>{ el.style.opacity = '0'; }, 2500);
+}
+
+// ═══════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════════════
+function switchTab(tab){
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(el => el.classList.remove('active'));
+  $('tab-'+tab).classList.add('active');
+  $('nav-'+tab).classList.add('active');
+  window.scrollTo(0,0);
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════════════════
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur==='dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  S.settings.theme = next;
+  save();
+  Object.values(charts).forEach(c => c && c.destroy());
+  charts = {};
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════════════
+// DATE STRIPS
+// ═══════════════════════════════════════════════════════════
+function renderDateStrip(pillar){
+  const el = $(pillar+'-date-strip');
+  if(!el) return;
+  const today = TODAY();
+  if(!S.selectedDate[pillar]) S.selectedDate[pillar] = today;
+  const dates = getNDaysBack(14);
+  el.innerHTML = dates.map(d => {
+    const hasData = !!(S[pillar] && S[pillar][d] && Object.keys(S[pillar][d]).length>0);
+    const isToday = d===today;
+    const isActive = d===S.selectedDate[pillar];
+    return `<div class="date-cell ${isToday?'today':''} ${isActive?'active':''} ${hasData?'has-data':''}" onclick="selectDate('${pillar}','${d}')">
+      <div class="dc-day">${dayName(d)}</div>
+      <div class="dc-num">${dayNum(d)}</div>
+    </div>`;
+  }).join('');
+}
+function selectDate(pillar, date){
+  S.selectedDate[pillar] = date;
+  save();
+  renderAll();
+}
+function getActiveDate(pillar){
+  return S.selectedDate[pillar] || TODAY();
+}
+
+// ═══════════════════════════════════════════════════════════
+// BODY PILLAR
+// ═══════════════════════════════════════════════════════════
+function ensureBodyDay(d){
+  if(!S.body[d]) S.body[d] = {};
+  return S.body[d];
+}
+function saveBodyDaily(){
+  const d = getActiveDate('body');
+  const day = ensureBodyDay(d);
+  const w = parseFloat($('b-weight-in').value);
+  const sl = parseFloat($('b-sleep-in').value);
+  const wa = parseFloat($('b-water-in').value);
+  if(!isNaN(w)) day.weight = w;
+  if(!isNaN(sl)) day.sleep = sl;
+  if(!isNaN(wa)) day.water = wa;
+  save();
+  renderBody();
+  toast('Body metrics saved');
+  $('b-weight-in').value='';$('b-sleep-in').value='';$('b-water-in').value='';
+}
+function toggleBody(kind){
+  const d = getActiveDate('body');
+  const day = ensureBodyDay(d);
+  if(kind==='gym'){
+    day.gym = !day.gym;
+    $('b-gym-tgl').classList.toggle('on', day.gym);
+    $('b-gym-notes-sec').style.display = day.gym ? 'block' : 'none';
+  } else if(kind==='cardio'){
+    day.cardio = !day.cardio;
+    $('b-cardio-tgl').classList.toggle('on', day.cardio);
+    $('b-cardio-sec').style.display = day.cardio ? 'block' : 'none';
+  }
+  save();
+}
+function saveBodyTraining(){
+  const d = getActiveDate('body');
+  const day = ensureBodyDay(d);
+  if(day.gym) day.gymNotes = $('b-gym-notes').value;
+  if(day.cardio){
+    day.cardioKm = parseFloat($('b-cardio-km').value) || 0;
+    day.cardioMin = parseInt($('b-cardio-min').value) || 0;
+  }
+  save();
+  renderBody();
+  toast('Training saved');
+}
+function addMeal(){
+  const d = getActiveDate('body');
+  const name = $('b-meal-name').value.trim();
+  if(!name){ toast('Enter meal name','err'); return; }
+  const cal = parseInt($('b-meal-cal').value) || 0;
+  const prot = parseInt($('b-meal-prot').value) || 0;
+  if(!S.meals[d]) S.meals[d] = [];
+  S.meals[d].push({ id:NOW(), name, cal, prot, ts:NOW() });
+  $('b-meal-name').value='';$('b-meal-cal').value='';$('b-meal-prot').value='';
+  save();
+  renderBody();
+  toast('Meal logged');
+}
+function delMeal(id){
+  const d = getActiveDate('body');
+  if(!S.meals[d]) return;
+  S.meals[d] = S.meals[d].filter(m => m.id!==id);
+  save();
+  renderBody();
+}
+
+async function aiLogMeals(){
+  if(!S.settings.apiKey){
+    toast('Add Anthropic API key in Settings first','err');
+    openModal('settings-modal');
+    return;
+  }
+  const text = $('b-ai-meal').value.trim();
+  if(!text){ toast('Describe what you ate','err'); return; }
+  const btn = $('b-ai-btn');
+  btn.textContent = '⏳ Analyzing…';
+  btn.disabled = true;
+
+  try{
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'content-type':'application/json',
+        'x-api-key': S.settings.apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1500,
+        system: `You are a nutrition extraction tool. Given a description of meals/food eaten, return ONLY a JSON array (no markdown, no explanation, no code fences) of meal objects with this exact shape: [{"name":"meal name","cal":<integer>,"prot":<integer>}]. Group items into logical meals (breakfast, lunch, dinner, snack) when possible, otherwise list each item as its own entry. Use realistic estimates based on standard portions if quantities aren't specified. For ambiguous foods, assume average preparation. Always return valid JSON only.`,
+        messages: [{ role:'user', content: text }]
+      })
+    });
+    if(!resp.ok){
+      const e = await resp.json();
+      throw new Error(e.error?.message || `HTTP ${resp.status}`);
+    }
+    const data = await resp.json();
+    let reply = data.content[0].text.trim();
+    // Strip code fences if present
+    reply = reply.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+    const meals = JSON.parse(reply);
+    if(!Array.isArray(meals)) throw new Error('Invalid response format');
+
+    const d = getActiveDate('body');
+    if(!S.meals[d]) S.meals[d] = [];
+    let totalCal = 0, totalProt = 0;
+    meals.forEach(m => {
+      if(!m.name) return;
+      const cal = parseInt(m.cal) || 0;
+      const prot = parseInt(m.prot) || 0;
+      S.meals[d].push({ id: NOW() + Math.random(), name: m.name, cal, prot, ts: NOW() });
+      totalCal += cal;
+      totalProt += prot;
+    });
+    save();
+    $('b-ai-meal').value = '';
+    renderBody();
+    toast(`✓ Logged ${meals.length} meals · +${totalCal} cal · +${totalProt}g protein`);
+  } catch(e){
+    toast('AI parse failed: ' + e.message, 'err');
+  } finally {
+    btn.textContent = '⚡ Calculate & log meals';
+    btn.disabled = false;
+  }
+}
+function renderBody(){
+  if(activeTab !== 'body') return;
+  const d = getActiveDate('body');
+  const day = S.body[d] || {};
+  const meals = S.meals[d] || [];
+  const totCal = meals.reduce((s,m)=>s+(m.cal||0), 0);
+  const totProt = meals.reduce((s,m)=>s+(m.prot||0), 0);
+
+  $('b-weight').textContent = day.weight ? day.weight.toFixed(1) : '—';
+  $('b-cal').textContent = totCal;
+  $('b-prot').textContent = totProt;
+
+  $('b-cal-pl').textContent = `${totCal} / ${S.profile.calTarget}`;
+  $('b-cal-pf').style.width = pct(totCal, S.profile.calTarget)+'%';
+  $('b-prot-pl').textContent = `${totProt}g / ${S.profile.protTarget}g`;
+  $('b-prot-pf').style.width = pct(totProt, S.profile.protTarget)+'%';
+
+  $('b-gym-tgl').classList.toggle('on', !!day.gym);
+  $('b-gym-notes-sec').style.display = day.gym ? 'block' : 'none';
+  if(day.gymNotes) $('b-gym-notes').value = day.gymNotes;
+
+  $('b-cardio-tgl').classList.toggle('on', !!day.cardio);
+  $('b-cardio-sec').style.display = day.cardio ? 'block' : 'none';
+  if(day.cardioKm) $('b-cardio-km').value = day.cardioKm;
+  if(day.cardioMin) $('b-cardio-min').value = day.cardioMin;
+
+  // Meals list
+  const ml = $('b-meals-list');
+  if(meals.length === 0){
+    ml.innerHTML = '<div class="empty">No meals logged</div>';
+  } else {
+    ml.innerHTML = meals.map(m => `
+      <div class="li-item">
+        <div class="li-main">
+          <div class="li-title">${esc(m.name)}</div>
+          <div class="li-sub">${m.cal} cal · ${m.prot}g protein</div>
+        </div>
+        <button class="bdel" onclick="delMeal(${m.id})">×</button>
+      </div>
+    `).join('');
+  }
+
+  renderDateStrip('body');
+  renderBodyChart();
+}
+function renderBodyChart(){
+  const ctx = $('body-weight-chart');
+  if(!ctx) return;
+  const dates = getNDaysBack(30);
+  const data = dates.map(d => S.body[d]?.weight || null);
+  if(charts.body) charts.body.destroy();
+  charts.body = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: dates.map(d => fmtDate(d)),
+      datasets:[{
+        data,
+        borderColor:'#fb923c',
+        backgroundColor:'rgba(255,107,53,.1)',
+        borderWidth:2,
+        tension:.3,
+        spanGaps:true,
+        pointRadius:3,
+        pointBackgroundColor:'#fb923c',
+        fill:true,
+      }]
+    },
+    options: chartOpts(false)
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SOCIAL PILLAR
+// ═══════════════════════════════════════════════════════════
+function ensureSocialDay(d){
+  if(!S.social[d]) S.social[d] = {};
+  return S.social[d];
+}
+function saveSocial(){
+  const d = getActiveDate('social');
+  const day = ensureSocialDay(d);
+  day.rating = parseInt($('s-rating-slider').value);
+  day.approaches = parseInt($('s-approach-in').value) || 0;
+  day.compliments = parseInt($('s-compl-in').value) || 0;
+  day.connections = parseInt($('s-conn-in').value) || 0;
+  save();
+  renderSocial();
+  toast('Social log saved');
+}
+function addContact(){
+  const name = $('s-contact-name').value.trim();
+  if(!name){ toast('Enter name','err'); return; }
+  S.contacts.push({
+    id: NOW(),
+    name,
+    type: $('s-contact-type').value,
+    source: $('s-contact-source').value,
+    ts: NOW()
+  });
+  $('s-contact-name').value='';$('s-contact-source').value='';
+  save();
+  renderSocial();
+  toast('Contact added');
+}
+function delContact(id){
+  S.contacts = S.contacts.filter(c => c.id!==id);
+  save();
+  renderSocial();
+}
+function renderSocial(){
+  if(activeTab !== 'social') return;
+  const d = getActiveDate('social');
+  const day = S.social[d] || {};
+  $('s-score').textContent = day.rating != null ? day.rating : '—';
+  $('s-approaches').textContent = day.approaches || 0;
+  $('s-compliments').textContent = day.compliments || 0;
+  $('s-conn').textContent = day.connections || 0;
+
+  $('s-rating-slider').value = day.rating != null ? day.rating : 5;
+  $('s-rating-val').textContent = day.rating != null ? day.rating : 5;
+  $('s-approach-in').value = day.approaches || '';
+  $('s-compl-in').value = day.compliments || '';
+  $('s-conn-in').value = day.connections || '';
+
+  // Weekly totals
+  const last7 = getNDaysBack(7);
+  const wkApp = last7.reduce((s,d) => s + (S.social[d]?.approaches || 0), 0);
+  const wkCmp = last7.reduce((s,d) => s + (S.social[d]?.compliments || 0), 0);
+  const wkCnn = last7.reduce((s,d) => s + (S.social[d]?.connections || 0), 0);
+  const ratings = last7.map(d => S.social[d]?.rating).filter(r => r != null);
+  const wkAvg = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1) : '—';
+  $('s-wk-approach').textContent = wkApp;
+  $('s-wk-compl').textContent = wkCmp;
+  $('s-wk-conn').textContent = wkCnn;
+  $('s-wk-avg').textContent = wkAvg;
+
+  renderDateStrip('social');
+  renderSocialChart();
+}
+function renderSocialChart(){
+  const ctx = $('social-chart');
+  if(!ctx) return;
+  const dates = getNDaysBack(7);
+  const data = dates.map(d => S.social[d]?.rating || null);
+  if(charts.social) charts.social.destroy();
+  charts.social = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: dates.map(d => dayName(d)),
+      datasets:[{
+        data,
+        backgroundColor:'#f0abfc',
+        borderRadius:6,
+        maxBarThickness: 32,
+      }]
+    },
+    options: chartOpts(true, 10)
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// MONEY PILLAR
+// ═══════════════════════════════════════════════════════════
+function ensureMoneyDay(d){
+  if(!S.money[d]) S.money[d] = {};
+  return S.money[d];
+}
+function addIdea(){
+  const title = $('biz-idea-title').value.trim();
+  if(!title){ toast('Enter idea','err'); return; }
+  S.ideas.push({
+    id: NOW(),
+    title,
+    notes: $('biz-idea-notes').value.trim(),
+    ts: NOW()
+  });
+  $('biz-idea-title').value='';$('biz-idea-notes').value='';
+  save();
+  renderBusiness();
+  toast('Idea saved');
+}
+function delIdea(id){
+  S.ideas = S.ideas.filter(i => i.id!==id);
+  save();
+  renderBusiness();
+}
+function logPortfolio(){
+  const v = parseFloat($('m-port-in').value);
+  if(isNaN(v) || v < 0){ toast('Enter portfolio value','err'); return; }
+  S.portfolio.push({ date: TODAY(), value: v, ts: NOW(), source: 'manual' });
+  $('m-port-in').value = '';
+  save();
+  renderMoney();
+  toast(`Portfolio updated: €${v.toFixed(2)}`);
+}
+
+async function syncT212(){
+  const url = S.settings.t212ProxyUrl;
+  const secret = S.settings.t212ProxySecret;
+  if(!url || !secret){
+    toast('Configure T212 proxy in Settings first','err');
+    openModal('settings-modal');
+    return;
+  }
+  const btn = $('t212-sync-btn');
+  if(btn){ btn.textContent = '⟳ Syncing…'; btn.disabled = true; }
+  try{
+    const resp = await fetch(url.replace(/\/$/,'') + '/summary', {
+      headers: { 'X-Proxy-Secret': secret }
+    });
+    if(!resp.ok){
+      const e = await resp.json().catch(()=>({error:'HTTP '+resp.status}));
+      throw new Error(e.error || `HTTP ${resp.status}`);
+    }
+    const data = await resp.json();
+    // T212 cash endpoint returns: { free, total, ppl, result, invested, pieCash, blocked }
+    // total = total account value (cash + invested + unrealized P/L)
+    const total = data.total ?? data.totalValue ?? null;
+    if(total == null){
+      throw new Error('No total value in response: ' + JSON.stringify(data).slice(0,100));
+    }
+    S.portfolio.push({
+      date: TODAY(),
+      value: total,
+      ts: NOW(),
+      source: 't212',
+      detail: { free: data.free, invested: data.invested, ppl: data.ppl }
+    });
+    save();
+    renderMoney();
+    const status = $('t212-status');
+    if(status){
+      status.textContent = `✓ Last sync: ${new Date().toLocaleTimeString()} · €${total.toFixed(2)}`;
+      status.style.color = 'var(--money)';
+    }
+    toast(`Synced: €${total.toFixed(2)}`);
+  } catch(e){
+    toast('T212 sync failed: ' + e.message, 'err');
+    const status = $('t212-status');
+    if(status){
+      status.textContent = '⚠ Sync failed: ' + e.message;
+      status.style.color = 'var(--danger)';
+    }
+  } finally {
+    if(btn){ btn.textContent = '⟳ Sync from Trading 212'; btn.disabled = false; }
+  }
+}
+
+function saveT212Config(){
+  S.settings.t212ProxyUrl = $('set-t212-url').value.trim();
+  S.settings.t212ProxySecret = $('set-t212-secret').value.trim();
+  save();
+  toast(S.settings.t212ProxyUrl ? 'T212 proxy configured' : 'T212 config cleared');
+}
+
+async function testT212(){
+  const url = $('set-t212-url').value.trim();
+  const secret = $('set-t212-secret').value.trim();
+  if(!url || !secret){ toast('Fill both fields first','err'); return; }
+  toast('Testing connection…');
+  try{
+    const resp = await fetch(url.replace(/\/$/,'') + '/summary', {
+      headers: { 'X-Proxy-Secret': secret }
+    });
+    if(!resp.ok){
+      const e = await resp.json().catch(()=>({error:'HTTP '+resp.status}));
+      throw new Error(e.error || `HTTP ${resp.status}`);
+    }
+    const data = await resp.json();
+    const total = data.total ?? data.totalValue ?? 'unknown';
+    toast(`✓ Connected — total: €${typeof total === 'number' ? total.toFixed(2) : total}`);
+  } catch(e){
+    toast('Connection failed: ' + e.message, 'err');
+  }
+}
+function renderMoney(){
+  if(activeTab !== 'money') return;
+
+  // Update T212 status
+  const status = $('t212-status');
+  if(status){
+    if(S.settings.t212ProxyUrl && S.settings.t212ProxySecret){
+      const lastT212 = [...S.portfolio].reverse().find(p => p.source === 't212');
+      if(lastT212){
+        const ago = Math.round((NOW() - lastT212.ts) / 60000);
+        const agoStr = ago < 60 ? `${ago}m ago` : ago < 1440 ? `${Math.round(ago/60)}h ago` : `${Math.round(ago/1440)}d ago`;
+        status.textContent = `✓ Last T212 sync: ${agoStr} · €${lastT212.value.toFixed(2)}`;
+        status.style.color = '';
+      } else {
+        status.textContent = '✓ T212 proxy configured — tap Sync to fetch';
+        status.style.color = '';
+      }
+    } else {
+      status.textContent = 'Set up the Trading 212 proxy in Settings ⚙ to enable auto-sync.';
+      status.style.color = '';
+    }
+  }
+
+  // Portfolio
+  const sorted = [...S.portfolio].sort((a,b) => a.ts - b.ts);
+  if(sorted.length === 0){
+    $('m-portfolio-val').textContent = '€—';
+    $('m-portfolio-delta').textContent = '—';
+    $('m-portfolio-trend').textContent = 'no data';
+    $('m-port-entries').textContent = '0';
+    $('m-port-high').textContent = '€—';
+    $('m-port-growth').textContent = '—';
+    $('m-port-history').innerHTML = '<div class="empty">No entries yet</div>';
+  } else {
+    const latest = sorted[sorted.length - 1];
+    const first = sorted[0];
+    $('m-portfolio-val').textContent = '€' + latest.value.toLocaleString('en-US',{maximumFractionDigits:0});
+    $('m-port-entries').textContent = sorted.length;
+    const high = Math.max(...sorted.map(p=>p.value));
+    $('m-port-high').textContent = '€' + high.toLocaleString('en-US',{maximumFractionDigits:0});
+
+    if(sorted.length >= 2){
+      const prev = sorted[sorted.length - 2];
+      const delta = latest.value - prev.value;
+      const pctDelta = (delta / prev.value) * 100;
+      const sign = delta >= 0 ? '+' : '';
+      $('m-portfolio-delta').textContent = `${sign}€${delta.toFixed(0)}`;
+      $('m-portfolio-delta').style.color = delta >= 0 ? 'var(--money)' : 'var(--danger)';
+      $('m-portfolio-trend').textContent = `${sign}${pctDelta.toFixed(1)}%`;
+      $('m-portfolio-trend').style.color = delta >= 0 ? 'var(--money)' : 'var(--danger)';
+
+      // Total growth from first entry
+      const totalGrowth = ((latest.value - first.value) / first.value) * 100;
+      const tgSign = totalGrowth >= 0 ? '+' : '';
+      $('m-port-growth').textContent = `${tgSign}${totalGrowth.toFixed(1)}%`;
+      $('m-port-growth').style.color = totalGrowth >= 0 ? 'var(--money)' : 'var(--danger)';
+    } else {
+      $('m-portfolio-delta').textContent = 'first entry';
+      $('m-portfolio-trend').textContent = 'baseline';
+      $('m-port-growth').textContent = '—';
+    }
+
+    // History
+    const hist = [...sorted].reverse().slice(0, 20);
+    $('m-port-history').innerHTML = hist.map((p, i) => {
+      const idx = sorted.length - 1 - i;
+      let deltaStr = '';
+      if(idx > 0){
+        const prev = sorted[idx - 1];
+        const d = p.value - prev.value;
+        const sign = d >= 0 ? '+' : '';
+        deltaStr = `<span class="delta ${d>=0?'up':'down'}">${sign}€${d.toFixed(0)}</span>`;
+      }
+      return `<div class="li-item">
+        <div class="li-main">
+          <div class="li-title">€${p.value.toLocaleString('en-US',{maximumFractionDigits:2})}</div>
+          <div class="li-sub">${fmtDate(p.date)}</div>
+        </div>
+        ${deltaStr}
+      </div>`;
+    }).join('');
+  }
+
+  renderPortfolioChart();
+}
+
+function ensureBizDay(d){
+  if(!S.money[d]) S.money[d] = {};
+  return S.money[d];
+}
+function saveBusiness(){
+  const d = getActiveDate('business');
+  const day = ensureBizDay(d);
+  const h = parseFloat($('biz-hours-in').value);
+  if(isNaN(h) || h <= 0){ toast('Enter hours','err'); return; }
+  day.hours = (day.hours || 0) + h;
+  day.type = $('biz-type').value;
+  const note = $('biz-notes').value.trim();
+  if(note){
+    day.notes = (day.notes || '') + (day.notes?'\n':'') + `[${day.type}] ${note}`;
+  }
+  $('biz-hours-in').value='';$('biz-notes').value='';
+  save();
+  renderBusiness();
+  toast(`+${h}h logged`);
+}
+function renderBusiness(){
+  if(activeTab !== 'business') return;
+  const d = getActiveDate('business');
+  const day = S.money[d] || {};
+  const hrs = day.hours || 0;
+  $('biz-hours').textContent = hrs.toFixed(1);
+  $('biz-hours-pl').textContent = `${hrs.toFixed(1)}h / ${S.profile.bizTarget}h`;
+  $('biz-hours-pf').style.width = pct(hrs, S.profile.bizTarget)+'%';
+
+  const weekDates = getNDaysBack(7);
+  const wkHrs = weekDates.reduce((s,d) => s + (S.money[d]?.hours || 0), 0);
+  $('biz-week').textContent = wkHrs.toFixed(1);
+
+  $('biz-ideas').textContent = S.ideas.length;
+  $('biz-ideas-count').textContent = S.ideas.length;
+
+  // Ideas list
+  const il = $('biz-ideas-list');
+  const sortedI = [...S.ideas].sort((a,b) => b.ts-a.ts);
+  if(sortedI.length === 0){
+    il.innerHTML = '<div class="empty">No ideas captured yet</div>';
+  } else {
+    il.innerHTML = sortedI.map(i => `
+      <div class="li-item">
+        <div class="li-main">
+          <div class="li-title">${esc(i.title)}</div>
+          ${i.notes?`<div class="li-sub" style="text-transform:none;letter-spacing:0;font-family:var(--sans);font-size:11px;color:var(--text-2);margin-top:4px">${esc(i.notes)}</div>`:''}
+        </div>
+        <button class="bdel" onclick="delIdea(${i.id})">×</button>
+      </div>
+    `).join('');
+  }
+
+  renderDateStrip('business');
+  renderBusinessChart();
+}
+function renderBusinessChart(){
+  const ctx = $('business-chart');
+  if(!ctx) return;
+  const dates = getNDaysBack(14);
+  const data = dates.map(d => S.money[d]?.hours || 0);
+  if(charts.business) charts.business.destroy();
+  charts.business = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: dates.map(d => fmtDate(d)),
+      datasets:[{
+        data,
+        backgroundColor: data.map(v => v >= S.profile.bizTarget ? '#4ade80' : 'rgba(74,222,128,.4)'),
+        borderRadius:4,
+        maxBarThickness: 24,
+      }]
+    },
+    options: chartOpts(true)
+  });
+}
+function renderPortfolioChart(){
+  const ctx = $('portfolio-chart');
+  if(!ctx) return;
+  const sorted = [...S.portfolio].sort((a,b) => a.ts - b.ts);
+  const labels = sorted.map(p => fmtDate(p.date));
+  const data = sorted.map(p => p.value);
+  if(charts.portfolio) charts.portfolio.destroy();
+  charts.portfolio = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        data,
+        borderColor:'#4ade80',
+        backgroundColor:'rgba(74,222,128,.12)',
+        borderWidth:2,
+        tension:.25,
+        pointRadius:3,
+        pointBackgroundColor:'#4ade80',
+        fill:true,
+      }]
+    },
+    options: chartOpts(true)
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// CV PILLAR
+// ═══════════════════════════════════════════════════════════
+function ensureCVDay(d){
+  if(!S.cv[d]) S.cv[d] = {};
+  return S.cv[d];
+}
+function saveGMAT(){
+  const d = getActiveDate('cv');
+  const day = ensureCVDay(d);
+  const p = parseInt($('c-ttp-p-in').value) || 0;
+  const c = parseInt($('c-ttp-c-in').value) || 0;
+  const t = parseInt($('c-ttp-t-in').value) || 0;
+  if(p === 0){ toast('Enter problems','err'); return; }
+  day.problems = (day.problems || 0) + p;
+  day.correct = (day.correct || 0) + c;
+  day.time = (day.time || 0) + t;
+  day.topic = $('c-ttp-topic-in').value;
+  $('c-ttp-p-in').value='';$('c-ttp-c-in').value='';$('c-ttp-t-in').value='';$('c-ttp-topic-in').value='';
+  save();
+  renderCV();
+  toast(`+${p} problems logged`);
+}
+function addCVGoal(){
+  const title = $('c-goal-title').value.trim();
+  if(!title){ toast('Enter milestone','err'); return; }
+  S.cvGoals.push({
+    id: NOW(),
+    title,
+    deadline: $('c-goal-date').value,
+    priority: $('c-goal-pri').value,
+    done: false,
+    ts: NOW()
+  });
+  $('c-goal-title').value='';$('c-goal-date').value='';
+  save();
+  renderCV();
+  toast('Milestone added');
+}
+function toggleCVGoal(id){
+  const g = S.cvGoals.find(x => x.id===id);
+  if(g){ g.done = !g.done; save(); renderCV(); }
+}
+function delCVGoal(id){
+  S.cvGoals = S.cvGoals.filter(g => g.id!==id);
+  save();
+  renderCV();
+}
+function renderCV(){
+  if(activeTab !== 'cv') return;
+  const d = getActiveDate('cv');
+  const day = S.cv[d] || {};
+  $('c-ttp-prob').textContent = day.problems || 0;
+  $('c-ttp-acc').textContent = day.problems > 0 ? Math.round((day.correct/day.problems)*100) : '—';
+  $('c-ttp-time').textContent = day.time || 0;
+
+  // CV goals
+  const gl = $('cv-goals-list');
+  const active = S.cvGoals.filter(g => !g.done).sort((a,b) => {
+    const pri = {high:0, med:1, low:2};
+    if(pri[a.priority] !== pri[b.priority]) return pri[a.priority]-pri[b.priority];
+    return (a.deadline || '9999').localeCompare(b.deadline || '9999');
+  });
+  $('cv-goals-count').textContent = active.length;
+  if(active.length === 0 && S.cvGoals.length === 0){
+    gl.innerHTML = '<div class="empty">No active CV goals — add one below</div>';
+  } else {
+    gl.innerHTML = [...active, ...S.cvGoals.filter(g => g.done).slice(0, 3)].map(g => {
+      const priB = {high:'high',med:'med',low:'low'}[g.priority];
+      const days = g.deadline ? Math.ceil((new Date(g.deadline)-new Date())/86400000) : null;
+      const hasDesc = g.desc && g.desc.length > 0;
+      return `<div class="li-item ${g.done?'done':''}">
+        <div class="cb ${g.done?'on':''}" onclick="event.stopPropagation();toggleCVGoal(${g.id})"></div>
+        <div class="li-main" ${hasDesc?`onclick="showGoalDesc(${g.id})" style="cursor:pointer"`:''}>
+          <div class="li-title">${esc(g.title)} ${hasDesc?'<span style="color:var(--text-3);font-size:11px;font-weight:400">ⓘ</span>':''}</div>
+          <div class="li-sub">${days!=null?(days<0?`overdue ${-days}d`:`${days}d left`):'no deadline'}${g.deadline?' · '+fmtDate(g.deadline):''}</div>
+        </div>
+        <span class="badge ${priB}">${g.priority}</span>
+        <button class="bdel" onclick="event.stopPropagation();delCVGoal(${g.id})">×</button>
+      </div>`;
+    }).join('');
+  }
+
+  renderDateStrip('cv');
+  renderCVChart();
+}
+function showGoalDesc(id){
+  const g = S.cvGoals.find(x => x.id === id);
+  if(!g || !g.desc) return;
+  const days = g.deadline ? Math.ceil((new Date(g.deadline)-new Date())/86400000) : null;
+  const dayStr = days != null ? (days < 0 ? `Overdue by ${-days} days` : days === 0 ? 'Due today' : `${days} days left`) : '';
+  $('goal-desc-title').textContent = g.title;
+  $('goal-desc-meta').innerHTML = `<span class="badge ${g.priority==='high'?'high':g.priority==='med'?'med':'low'}">${g.priority}</span> · ${g.deadline?fmtDate(g.deadline):'No deadline'} · ${dayStr}`;
+  $('goal-desc-body').textContent = g.desc;
+  $('goal-desc-status').textContent = g.done ? '✓ Completed' : '';
+  openModal('goal-desc-modal');
+}
+function renderCVChart(){
+  const ctx = $('cv-chart');
+  if(!ctx) return;
+  const dates = getNDaysBack(30);
+  const data = dates.map(d => {
+    const day = S.cv[d];
+    return day && day.problems > 0 ? Math.round((day.correct/day.problems)*100) : null;
+  });
+  if(charts.cv) charts.cv.destroy();
+  charts.cv = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: dates.map(d => fmtDate(d)),
+      datasets:[{
+        data,
+        borderColor:'#7dd3fc',
+        backgroundColor:'rgba(96,165,250,.1)',
+        borderWidth:2,
+        tension:.3,
+        spanGaps:true,
+        pointRadius:3,
+        pointBackgroundColor:'#7dd3fc',
+        fill:true,
+      }]
+    },
+    options: chartOpts(true, 100)
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// PLAN / EVENTS / CALENDAR
+// ═══════════════════════════════════════════════════════════
+let calMonth = new Date().getMonth();
+let calYear = new Date().getFullYear();
+
+function delEvent(id){
+  S.events = S.events.filter(e => e.id !== id);
+  save();
+  renderPlan();
+  renderOverview();
+  // Refresh day modal if open
+  const modal = $('day-modal');
+  if(modal && modal.classList.contains('open')){
+    const title = $('day-modal-title').textContent;
+    // Re-extract date from title and refresh
+    const events = S.events.filter(e => {
+      const d = new Date(e.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+      return d === title;
+    });
+    if(events.length === 0){
+      closeModal('day-modal');
+    } else {
+      renderDayEvents(events[0].date);
+    }
+  }
+}
+
+async function aiAddEvents(){
+  if(!S.settings.apiKey){
+    toast('Add Anthropic API key in Settings first','err');
+    openModal('settings-modal');
+    return;
+  }
+  const text = $('plan-ai-text').value.trim();
+  if(!text){ toast('Describe your events','err'); return; }
+  const btn = $('plan-ai-btn');
+  btn.textContent = '⏳ Parsing…';
+  btn.disabled = true;
+
+  const today = TODAY();
+  const todayName = new Date().toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric', year:'numeric'});
+
+  try{
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'content-type':'application/json',
+        'x-api-key': S.settings.apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1500,
+        system: `You are an event extraction tool. Today is ${todayName} (${today}). Given a description of events/plans, return ONLY a JSON array (no markdown, no code fences, no explanation) of event objects with this exact shape: [{"title":"event title","date":"YYYY-MM-DD","time":"HH:MM" or "","category":"cv|work|study|body|social|business|personal","notes":"optional context"}]. 
+
+Categories:
+- "cv" = CV/application related (GMAT, essays, internship, school deadlines)
+- "work" = work meetings, PwC, professional
+- "study" = university classes, exams, study sessions
+- "body" = gym, run, futsal, sports
+- "social" = parties, dates, friend hangouts, networking
+- "business" = side business work, ideas, meetings about business
+- "personal" = errands, family, doctor, life admin
+
+Parse relative dates ("next Tuesday", "Friday", "tomorrow") into actual YYYY-MM-DD. If no time is given, leave time as empty string. Return valid JSON only.`,
+        messages: [{ role:'user', content: text }]
+      })
+    });
+    if(!resp.ok){
+      const e = await resp.json();
+      throw new Error(e.error?.message || `HTTP ${resp.status}`);
+    }
+    const data = await resp.json();
+    let reply = data.content[0].text.trim();
+    reply = reply.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+    const events = JSON.parse(reply);
+    if(!Array.isArray(events)) throw new Error('Invalid response format');
+
+    let added = 0;
+    let firstDate = null;
+    events.forEach(e => {
+      if(!e.title || !e.date) return;
+      S.events.push({
+        id: NOW() + Math.random(),
+        title: e.title,
+        date: e.date,
+        time: e.time || '',
+        category: e.category || 'personal',
+        notes: e.notes || '',
+        ts: NOW()
+      });
+      added++;
+      if(!firstDate) firstDate = e.date;
+    });
+    save();
+    $('plan-ai-text').value = '';
+    // Jump calendar to month of first added event
+    if(firstDate){
+      const d = new Date(firstDate+'T12:00:00');
+      calMonth = d.getMonth();
+      calYear = d.getFullYear();
+    }
+    renderPlan();
+    renderOverview();
+    toast(`✓ Added ${added} event${added>1?'s':''} to calendar`);
+  } catch(e){
+    toast('AI parse failed: ' + e.message, 'err');
+  } finally {
+    btn.textContent = '⚡ Parse & add to calendar';
+    btn.disabled = false;
+  }
+}
+
+function categoryLabel(cat){
+  return {cv:'CV', work:'Work', study:'Study', body:'Body', social:'Social', business:'Biz', personal:'Personal'}[cat] || cat;
+}
+function categoryBadge(cat){
+  return {cv:'cv', work:'cv', study:'cv', body:'body', social:'social', business:'money', personal:'low'}[cat] || 'low';
+}
+function categoryColor(cat){
+  const map = {cv:'var(--cv)', work:'var(--text-2)', study:'var(--cv)', body:'var(--body)', social:'var(--social)', business:'var(--money)', personal:'var(--text-2)'};
+  return map[cat] || 'var(--text-2)';
+}
+
+function changeCalMonth(delta){
+  calMonth += delta;
+  if(calMonth < 0){ calMonth = 11; calYear--; }
+  if(calMonth > 11){ calMonth = 0; calYear++; }
+  renderCalendar();
+}
+
+function renderCalendar(){
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  $('cal-title').textContent = `${monthNames[calMonth]} ${calYear}`;
+
+  const grid = $('cal-grid');
+  const firstDay = new Date(calYear, calMonth, 1);
+  const lastDay = new Date(calYear, calMonth+1, 0);
+  const daysInMonth = lastDay.getDate();
+  // Monday = 0 (Sun = 6)
+  let startDay = firstDay.getDay() - 1;
+  if(startDay < 0) startDay = 6;
+  const today = TODAY();
+
+  // Group events by date for fast lookup
+  const eventsByDate = {};
+  S.events.forEach(e => {
+    if(!eventsByDate[e.date]) eventsByDate[e.date] = [];
+    eventsByDate[e.date].push(e);
+  });
+
+  let cells = '';
+
+  // Previous month padding
+  const prevLast = new Date(calYear, calMonth, 0).getDate();
+  for(let i = startDay-1; i >= 0; i--){
+    const d = prevLast - i;
+    cells += `<div class="cal-cell other-month"><div class="cal-num">${d}</div></div>`;
+  }
+
+  // Current month days
+  for(let d = 1; d <= daysInMonth; d++){
+    const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = ds === today;
+    const events = eventsByDate[ds] || [];
+    const hasEvents = events.length > 0;
+
+    let dotsHTML = '';
+    if(hasEvents){
+      const cats = [...new Set(events.map(e => e.category))].slice(0, 4);
+      dotsHTML = '<div class="cal-dots">' + cats.map(c => `<span class="cal-dot" style="background:${categoryColor(c)}"></span>`).join('');
+      if(events.length > 4) dotsHTML += `<span class="cal-more">+${events.length - 4}</span>`;
+      dotsHTML += '</div>';
+    }
+
+    cells += `<div class="cal-cell ${isToday?'today':''} ${hasEvents?'has-events':''}" onclick="openDayModal('${ds}')">
+      <div class="cal-num">${d}</div>
+      ${dotsHTML}
+    </div>`;
+  }
+
+  // Next month padding to complete grid
+  const totalCells = startDay + daysInMonth;
+  const padEnd = (7 - (totalCells % 7)) % 7;
+  for(let i = 1; i <= padEnd; i++){
+    cells += `<div class="cal-cell other-month"><div class="cal-num">${i}</div></div>`;
+  }
+
+  grid.innerHTML = cells;
+}
+
+function openDayModal(date){
+  const d = new Date(date+'T12:00:00');
+  $('day-modal-title').textContent = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  renderDayEvents(date);
+  openModal('day-modal');
+}
+
+function renderDayEvents(date){
+  const events = S.events.filter(e => e.date === date)
+    .sort((a,b) => (a.time || '99:99').localeCompare(b.time || '99:99'));
+  const el = $('day-events-list');
+  if(events.length === 0){
+    el.innerHTML = '<div class="empty">No events on this day</div>';
+    return;
+  }
+  el.innerHTML = events.map(e => `
+    <div class="day-event ${e.category}">
+      <div class="day-event-main">
+        <div class="day-event-title">${esc(e.title)}</div>
+        <div class="day-event-meta">${e.time || 'all day'} · ${categoryLabel(e.category)}</div>
+        ${e.notes ? `<div class="day-event-notes">${esc(e.notes)}</div>` : ''}
+      </div>
+      <button class="bdel" onclick="delEvent(${e.id})">×</button>
+    </div>
+  `).join('');
+}
+
+function renderPlan(){
+  if(activeTab !== 'plan') return;
+  renderCalendar();
+
+  const today = TODAY();
+  const sorted = [...S.events].sort((a,b) => {
+    if(a.date !== b.date) return a.date.localeCompare(b.date);
+    return (a.time || '99:99').localeCompare(b.time || '99:99');
+  });
+  const upcoming = sorted.filter(e => e.date >= today);
+  $('plan-upcoming-count').textContent = upcoming.length;
+
+  const ul = $('plan-upcoming-list');
+  if(upcoming.length === 0){
+    ul.innerHTML = '<div class="empty">No upcoming events</div>';
+  } else {
+    ul.innerHTML = renderEventGroups(upcoming.slice(0, 15));
+  }
+}
+
+function renderEventGroups(events){
+  const groups = {};
+  events.forEach(e => {
+    if(!groups[e.date]) groups[e.date] = [];
+    groups[e.date].push(e);
+  });
+  const today = TODAY();
+  return Object.keys(groups).sort().map(date => {
+    const days = Math.ceil((new Date(date)-new Date(today))/86400000);
+    let dateLabel;
+    if(date === today) dateLabel = 'Today';
+    else if(days === 1) dateLabel = 'Tomorrow';
+    else if(days <= 7 && days > 0) dateLabel = new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long'});
+    else dateLabel = fmtDate(date);
+    const dateSub = days >= 0 ? `${days}d` : `${-days}d ago`;
+
+    const items = groups[date].map(e => `
+      <div class="li-item">
+        <div class="li-main">
+          <div class="li-title">${esc(e.title)}</div>
+          <div class="li-sub">${e.time ? e.time + ' · ' : ''}${categoryLabel(e.category)}${e.notes ? ' · '+esc(e.notes) : ''}</div>
+        </div>
+        <span class="badge ${categoryBadge(e.category)}">${categoryLabel(e.category)}</span>
+        <button class="bdel" onclick="delEvent(${e.id})">×</button>
+      </div>
+    `).join('');
+
+    return `
+      <div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+          <div style="font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--text-2)">${dateLabel}</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text-3)">${dateSub}</div>
+        </div>
+        ${items}
+      </div>
+    `;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// HOME / OVERVIEW
+// ═══════════════════════════════════════════════════════════
+function getStreak(pillar, hasFn){
+  let streak = 0;
+  const today = new Date();
+  for(let i=0; i<365; i++){
+    const d = new Date(today);
+    d.setDate(d.getDate()-i);
+    const ds = d.toISOString().slice(0,10);
+    if(hasFn(ds)) streak++;
+    else if(i > 0) break;
+  }
+  return streak;
+}
+function renderOverview(){
+  if(activeTab !== 'overview') return;
+
+  // Greeting
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  $('hero-greet').innerHTML = `${greet}, <em>${esc(S.profile.name)}</em>.`;
+
+  // Hero sub - day briefing
+  const td = TODAY();
+  const todayMeals = S.meals[td] || [];
+  const cal = todayMeals.reduce((s,m)=>s+(m.cal||0),0);
+  const bizHrs = (S.money[td]?.hours || 0);
+  const cvProb = (S.cv[td]?.problems || 0);
+  $('hero-sub').textContent = `${cal} cal · ${bizHrs.toFixed(1)}h business · ${cvProb} GMAT problems today`;
+
+  // Body card
+  const bWeight = S.body[td]?.weight;
+  $('ph-body-score').textContent = bWeight ? bWeight.toFixed(1) : '—';
+  $('ph-body-desc').textContent = bWeight ? `${bWeight.toFixed(1)} kg · target ${S.profile.targetWeight}` : 'Log weight today';
+  const bStreak = getStreak('body', d => S.body[d] && Object.keys(S.body[d]).length > 0);
+  $('ph-body-streak').textContent = bStreak+'d';
+
+  // Social card
+  const sRating = S.social[td]?.rating;
+  $('ph-social-score').textContent = sRating != null ? sRating : '—';
+  $('ph-social-desc').textContent = sRating != null ? `Rating today · ${S.social[td]?.approaches||0} approaches` : 'Rate your day';
+  const sStreak = getStreak('social', d => S.social[d] && S.social[d].rating != null);
+  $('ph-social-streak').textContent = sStreak+'d';
+
+  // Money card (portfolio)
+  const sortedP = [...S.portfolio].sort((a,b) => a.ts - b.ts);
+  const latestP = sortedP[sortedP.length - 1];
+  if(latestP){
+    $('ph-money-score').textContent = '€' + latestP.value.toLocaleString('en-US',{maximumFractionDigits:0});
+    if(sortedP.length >= 2){
+      const prev = sortedP[sortedP.length - 2];
+      const delta = latestP.value - prev.value;
+      const pct = (delta / prev.value) * 100;
+      const sign = delta >= 0 ? '+' : '';
+      $('ph-money-trend').textContent = `${sign}${pct.toFixed(1)}%`;
+      $('ph-money-trend').style.color = delta >= 0 ? 'var(--money)' : 'var(--danger)';
+      $('ph-money-desc').textContent = `${sign}€${delta.toFixed(0)} vs last`;
+    } else {
+      $('ph-money-trend').textContent = 'baseline';
+      $('ph-money-desc').textContent = 'First entry logged';
+    }
+  } else {
+    $('ph-money-score').textContent = '€—';
+    $('ph-money-trend').textContent = 'no data';
+    $('ph-money-desc').textContent = 'Log your portfolio';
+  }
+
+  // Business card (hours)
+  $('ph-biz-score').textContent = bizHrs.toFixed(1);
+  $('ph-biz-desc').textContent = `${bizHrs.toFixed(1)}h / ${S.profile.bizTarget}h target`;
+  const bizStreak = getStreak('money', d => S.money[d] && S.money[d].hours >= S.profile.bizTarget);
+  $('ph-biz-streak').textContent = bizStreak+'d';
+
+  // CV card
+  $('ph-cv-score').textContent = cvProb;
+  const cvAcc = S.cv[td]?.problems > 0 ? Math.round((S.cv[td].correct/S.cv[td].problems)*100) : null;
+  $('ph-cv-desc').textContent = cvAcc!=null ? `${cvProb} problems · ${cvAcc}% acc` : `${cvProb} problems today`;
+  const cStreak = getStreak('cv', d => S.cv[d] && S.cv[d].problems > 0);
+  $('ph-cv-streak').textContent = cStreak+'d';
+
+  // Today's Focus - events + CV milestones in next 7 days
+  const tt = $('today-tasks');
+  const today = TODAY();
+  const nearEvents = S.events.filter(e => {
+    const days = Math.ceil((new Date(e.date)-new Date(today))/86400000);
+    return days >= 0 && days <= 7;
+  }).map(e => ({
+    type: 'event',
+    title: e.title,
+    date: e.date,
+    days: Math.ceil((new Date(e.date)-new Date(today))/86400000),
+    category: e.category,
+    time: e.time,
+    id: e.id
+  }));
+  const nearGoals = S.cvGoals.filter(g => !g.done && g.deadline)
+    .map(g => ({ type:'goal', ...g, days: Math.ceil((new Date(g.deadline)-new Date(today))/86400000) }))
+    .filter(g => g.days >= 0 && g.days <= 7);
+  const upcoming = [...nearEvents, ...nearGoals].sort((a,b) => a.days - b.days);
+  if(upcoming.length === 0){
+    tt.innerHTML = '<div class="empty">Nothing scheduled in next 7 days</div>';
+  } else {
+    tt.innerHTML = upcoming.map(item => {
+      if(item.type === 'event'){
+        return `<div class="li-item">
+          <div class="li-main">
+            <div class="li-title">${esc(item.title)}</div>
+            <div class="li-sub">${item.days===0?'today':item.days===1?'tomorrow':item.days+'d'}${item.time?' · '+item.time:''} · ${categoryLabel(item.category)}</div>
+          </div>
+          <span class="badge ${categoryBadge(item.category)}">${categoryLabel(item.category)}</span>
+        </div>`;
+      } else {
+        return `<div class="li-item ${item.done?'done':''}">
+          <div class="cb ${item.done?'on':''}" onclick="event.stopPropagation();toggleCVGoal(${item.id});renderOverview()"></div>
+          <div class="li-main">
+            <div class="li-title">${esc(item.title)}</div>
+            <div class="li-sub">${item.days===0?'today':item.days===1?'tomorrow':item.days+'d'} · CV milestone</div>
+          </div>
+          <span class="badge ${item.priority==='high'?'high':item.priority==='med'?'med':'low'}">${item.priority}</span>
+        </div>`;
+      }
+    }).join('');
+  }
+
+  // Upcoming milestones (>7d)
+  const um = $('upcoming-milestones');
+  const longTerm = S.cvGoals.filter(g => !g.done && g.deadline)
+    .map(g => ({ ...g, days: Math.ceil((new Date(g.deadline)-new Date())/86400000) }))
+    .filter(g => g.days > 7)
+    .sort((a,b) => a.days - b.days)
+    .slice(0, 5);
+  if(longTerm.length === 0){
+    um.innerHTML = '<div class="empty">No long-term milestones set</div>';
+  } else {
+    um.innerHTML = longTerm.map(g => `
+      <div class="li-item">
+        <div class="li-main">
+          <div class="li-title">${esc(g.title)}</div>
+          <div class="li-sub">${g.days}d · ${fmtDate(g.deadline)}</div>
+        </div>
+        <span class="badge cv">${g.priority}</span>
+      </div>
+    `).join('');
+  }
+
+  // Overview chart - daily activity score
+  renderOverviewChart();
+}
+function renderOverviewChart(){
+  const ctx = $('overview-chart');
+  if(!ctx) return;
+  const dates = getNDaysBack(7);
+  const bodyD = dates.map(d => {
+    const m = S.meals[d] || [];
+    const cal = m.reduce((s,x)=>s+(x.cal||0),0);
+    return Math.min(100, (cal / S.profile.calTarget) * 100);
+  });
+  const socialD = dates.map(d => {
+    const r = S.social[d]?.rating;
+    return r != null ? r * 10 : 0;
+  });
+  const moneyD = dates.map(d => {
+    const h = S.money[d]?.hours || 0;
+    return Math.min(100, (h / S.profile.bizTarget) * 100);
+  });
+  const cvD = dates.map(d => {
+    const p = S.cv[d]?.problems || 0;
+    return Math.min(100, (p / 30) * 100); // 30 problems = 100%
+  });
+
+  if(charts.overview) charts.overview.destroy();
+  charts.overview = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: dates.map(d => dayName(d)),
+      datasets:[
+        { label:'Body', data:bodyD, borderColor:'#fb923c', backgroundColor:'transparent', borderWidth:2, tension:.3, pointRadius:2 },
+        { label:'Social', data:socialD, borderColor:'#f0abfc', backgroundColor:'transparent', borderWidth:2, tension:.3, pointRadius:2 },
+        { label:'Business', data:moneyD, borderColor:'#4ade80', backgroundColor:'transparent', borderWidth:2, tension:.3, pointRadius:2 },
+        { label:'CV', data:cvD, borderColor:'#7dd3fc', backgroundColor:'transparent', borderWidth:2, tension:.3, pointRadius:2 },
+      ]
+    },
+    options: {
+      ...chartOpts(true, 100),
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom',
+          labels: {
+            font:{ family:"'JetBrains Mono', monospace", size:10 },
+            color: getCSSVar('--text-2'),
+            usePointStyle: true,
+            boxWidth: 6,
+            padding: 14,
+          }
+        }
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHART HELPERS
+// ═══════════════════════════════════════════════════════════
+function getCSSVar(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+function chartOpts(showY, yMax){
+  const grid = getCSSVar('--border');
+  const text = getCSSVar('--text-3');
+  const opts = {
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{ display:false },
+      tooltip:{
+        backgroundColor: getCSSVar('--surface'),
+        borderColor: getCSSVar('--border-2'),
+        borderWidth: 1,
+        titleColor: getCSSVar('--text'),
+        bodyColor: getCSSVar('--text-2'),
+        titleFont: { family:"'JetBrains Mono', monospace", size:10 },
+        bodyFont: { family:"'JetBrains Mono', monospace", size:11 },
+        padding: 8,
+      }
+    },
+    scales:{
+      x:{ grid:{ display:false }, ticks:{ color:text, font:{family:"'JetBrains Mono', monospace", size:9} } },
+      y:{
+        display: showY,
+        max: yMax,
+        grid:{ color: grid, drawBorder:false },
+        ticks:{ color:text, font:{family:"'JetBrains Mono', monospace", size:9} },
+      }
+    }
+  };
+  return opts;
+}
+
+// ═══════════════════════════════════════════════════════════
+// VOICE
+// ═══════════════════════════════════════════════════════════
+function voiceInput(targetId, btn){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ toast('Voice not supported on this browser','err'); return; }
+  if(activeRec){ activeRec.stop(); return; }
+  const r = new SR();
+  r.lang = 'en-US';
+  r.continuous = false;
+  r.interimResults = false;
+  r.onstart = () => { activeRec = r; btn && btn.classList.add('listening'); };
+  r.onresult = e => {
+    const el = $(targetId);
+    if(el){
+      const t = e.results[0][0].transcript;
+      el.value = el.value ? el.value + ' ' + t : t;
+    }
+  };
+  r.onend = () => { activeRec = null; btn && btn.classList.remove('listening'); };
+  r.onerror = () => { activeRec = null; btn && btn.classList.remove('listening'); };
+  r.start();
+}
+function voiceChat(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ toast('Voice not supported','err'); return; }
+  const btn = $('voice-chat');
+  if(activeRec){ activeRec.stop(); return; }
+  const r = new SR();
+  r.lang = 'en-US';
+  r.continuous = false;
+  r.onstart = () => { activeRec = r; btn.classList.add('listening'); };
+  r.onresult = e => {
+    $('chat-inp').value = e.results[0][0].transcript;
+    activeRec = null;
+    btn.classList.remove('listening');
+    setTimeout(sendChat, 200);
+  };
+  r.onend = () => { activeRec = null; btn.classList.remove('listening'); };
+  r.onerror = () => { activeRec = null; btn.classList.remove('listening'); };
+  r.start();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MENTOR / CHAT
+// ═══════════════════════════════════════════════════════════
+function buildSystemPrompt(){
+  const td = TODAY();
+  const b = S.body[td] || {};
+  const m = S.meals[td] || [];
+  const s = S.social[td] || {};
+  const mo = S.money[td] || {};
+  const c = S.cv[td] || {};
+  const cal = m.reduce((x,i)=>x+(i.cal||0),0);
+  const prot = m.reduce((x,i)=>x+(i.prot||0),0);
+
+  // 7-day stats
+  const last7 = getNDaysBack(7);
+  const bizHrsWeek = last7.reduce((x,d)=>x+(S.money[d]?.hours||0),0);
+  const probsWeek = last7.reduce((x,d)=>x+(S.cv[d]?.problems||0),0);
+  const correctWeek = last7.reduce((x,d)=>x+(S.cv[d]?.correct||0),0);
+  const accWeek = probsWeek > 0 ? Math.round(correctWeek/probsWeek*100) : null;
+  const ratingsWeek = last7.map(d => S.social[d]?.rating).filter(r => r != null);
+  const avgRating = ratingsWeek.length ? (ratingsWeek.reduce((a,b)=>a+b,0)/ratingsWeek.length).toFixed(1) : null;
+
+  // Portfolio
+  const sortedP = [...S.portfolio].sort((a,b) => a.ts - b.ts);
+  const latestP = sortedP[sortedP.length-1];
+  const firstP = sortedP[0];
+  let portStr = 'no entries';
+  if(latestP){
+    portStr = `€${latestP.value.toFixed(0)}`;
+    if(firstP && firstP !== latestP){
+      const change = latestP.value - firstP.value;
+      const pct = (change/firstP.value*100).toFixed(1);
+      portStr += ` (${change>=0?'+':''}${pct}% since ${firstP.date})`;
+    }
+  }
+
+  const activeGoals = S.cvGoals.filter(g => !g.done).slice(0, 8);
+  
+  // Upcoming events (next 14 days)
+  const today14 = TODAY();
+  const upcomingEvents = S.events
+    .filter(e => {
+      const days = Math.ceil((new Date(e.date)-new Date(today14))/86400000);
+      return days >= 0 && days <= 14;
+    })
+    .sort((a,b) => a.date.localeCompare(b.date))
+    .slice(0, 10);
+  const eventStr = upcomingEvents.length 
+    ? upcomingEvents.map(e => `${e.date}${e.time?' '+e.time:''} ${e.title} [${e.category}]`).join(' | ')
+    : 'no scheduled events';
+
+  return `You are Oto's personal mentor and accountability partner. You know his full operating system and goals.
+
+CORE GOALS (5-year, 2026-2031):
+1. BODY: 78-80kg lean, strong endurance, looksmaxing
+2. SOCIAL: high social skills, network, active dating life
+3. MONEY: own business/agency €4k+/mo to escape office work (idea TBD in 2-3 months) + portfolio growth
+4. CV: HEC Paris MFin admission + standout internship stack
+
+CONTEXT:
+- M&A/finance career is INSTRUMENTAL — exists only to get into HEC MFin. Long-term plan is to leave finance for own business.
+- Currently: Tilburg IBA honors, exchange at NUS Aug 2026-Jan 2027, PwC Latvia internship June-Aug 2026
+- 6-school MFin application strategy: HEC (P1), ESCP (P2), Bocconi (P3), ESSEC, LBS, LSE — Sep 2027 intake
+- GMAT prep ongoing, target 720+ at Attempt #2 (Jan 2027)
+
+PROFILE:
+- Name: ${S.profile.name} | Current weight: ${S.profile.weight}kg → target ${S.profile.targetWeight}kg
+- Daily targets: ${S.profile.calTarget} cal · ${S.profile.protTarget}g protein · ${S.profile.bizTarget}h business
+
+TODAY (${td}):
+- Body: ${b.weight?b.weight+'kg':'no weight'}, ${cal}/${S.profile.calTarget} cal, ${prot}g/${S.profile.protTarget}g protein, gym ${b.gym?'✓':'✗'}, cardio ${b.cardio?'✓':'✗'}${b.cardioKm?' ('+b.cardioKm+'km)':''}
+- Social: rating ${s.rating??'—'}/10, ${s.approaches||0} approaches, ${s.compliments||0} compliments, ${s.connections||0} connections
+- Money: ${(mo.hours||0).toFixed(1)}h on business${mo.type?' ('+mo.type+')':''}
+- CV: ${c.problems||0} GMAT problems${c.problems>0?', '+Math.round(c.correct/c.problems*100)+'% acc':''}, ${c.linkedin||0} LI msgs
+
+LAST 7 DAYS:
+- Business hours: ${bizHrsWeek.toFixed(1)}h (target ${(S.profile.bizTarget*7).toFixed(0)}h)
+- GMAT: ${probsWeek} problems${accWeek!=null?', '+accWeek+'% acc':''}
+- Avg social rating: ${avgRating??'no data'}/10
+
+PORTFOLIO: ${portStr}
+
+ACTIVE CV MILESTONES (next deadlines): ${activeGoals.map(g => `${g.title}${g.deadline?' (by '+g.deadline+')':''}`).join(' | ') || 'none set'}
+UPCOMING EVENTS (14d): ${eventStr}
+IDEAS BANK: ${S.ideas.slice(0,5).map(i=>i.title).join(' | ') || 'empty — needs filling'}
+
+YOUR ROLE:
+- Be a direct, no-bullshit mentor. Push back when his plan is weak or he's avoiding something.
+- Ground every recommendation in his actual logged data.
+- Reference HEC application strength, not long-term M&A career building.
+- Keep responses concise (3-6 sentences usually). Use specifics, not vague advice.
+- Use hyphens not em-dashes.`;
+}
+
+function addChatMsg(text, role){
+  const c = $('chat-msgs');
+  const el = document.createElement('div');
+  el.className = 'msg msg-' + role;
+  el.textContent = text;
+  c.appendChild(el);
+  c.scrollTop = c.scrollHeight;
+}
+function addTyping(){
+  const c = $('chat-msgs');
+  const el = document.createElement('div');
+  el.className = 'typing';
+  el.id = 'typing-ind';
+  el.innerHTML = '<span></span><span></span><span></span>';
+  c.appendChild(el);
+  c.scrollTop = c.scrollHeight;
+}
+function removeTyping(){
+  const el = $('typing-ind');
+  if(el) el.remove();
+}
+async function sendChat(){
+  const inp = $('chat-inp');
+  const text = inp.value.trim();
+  if(!text) return;
+  if(!S.settings.apiKey){
+    addChatMsg('Add your Anthropic API key in Settings ⚙ to chat with your mentor.','mentor');
+    return;
+  }
+  inp.value = '';
+  addChatMsg(text, 'user');
+  S.chat.push({ role:'user', content:text });
+  if(S.chat.length > 40) S.chat = S.chat.slice(-40);
+  addTyping();
+  try{
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'content-type':'application/json',
+        'x-api-key': S.settings.apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5-20250929',
+        max_tokens: 1000,
+        system: buildSystemPrompt(),
+        messages: S.chat.slice(-12)
+      })
+    });
+    if(!resp.ok){
+      const e = await resp.json();
+      throw new Error(e.error?.message || `HTTP ${resp.status}`);
+    }
+    const data = await resp.json();
+    const reply = data.content[0].text;
+    removeTyping();
+    S.chat.push({ role:'assistant', content:reply });
+    save();
+    addChatMsg(reply, 'mentor');
+  } catch(e){
+    removeTyping();
+    addChatMsg('⚠ Error: ' + e.message, 'mentor');
+  }
+}
+function quickPrompt(text){
+  $('chat-inp').value = text;
+  switchTab('mentor');
+  setTimeout(sendChat, 100);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════════════
+function saveSettings(){
+  S.profile.name = $('set-name').value || 'Oto';
+  S.profile.weight = parseFloat($('set-weight').value) || 74;
+  S.profile.targetWeight = parseFloat($('set-target-weight').value) || 79;
+  S.profile.calTarget = parseInt($('set-cal').value) || 3000;
+  S.profile.protTarget = parseInt($('set-prot').value) || 180;
+  S.profile.bizTarget = parseFloat($('set-biz').value) || 2;
+  save();
+  toast('Profile saved');
+  renderAll();
+}
+function saveApiKey(){
+  S.settings.apiKey = $('set-apikey').value.trim();
+  save();
+  toast(S.settings.apiKey ? 'API key saved' : 'API key cleared');
+  $('no-key-banner').style.display = S.settings.apiKey ? 'none' : 'block';
+}
+function loadSettingsForm(){
+  $('set-name').value = S.profile.name;
+  $('set-weight').value = S.profile.weight;
+  $('set-target-weight').value = S.profile.targetWeight;
+  $('set-cal').value = S.profile.calTarget;
+  $('set-prot').value = S.profile.protTarget;
+  $('set-biz').value = S.profile.bizTarget;
+  $('set-apikey').value = S.settings.apiKey || '';
+  $('set-jbkey').value = S.settings.jbKey || '';
+  $('set-jbbin').value = S.settings.jbBinId || '';
+  $('set-t212-url').value = S.settings.t212ProxyUrl || '';
+  $('set-t212-secret').value = S.settings.t212ProxySecret || '';
+}
+
+// ═══════════════════════════════════════════════════════════
+// CLOUD SYNC (jsonbin.io)
+// ═══════════════════════════════════════════════════════════
+async function syncNow(){
+  const key = $('set-jbkey').value || S.settings.jbKey;
+  if(!key){
+    toast('Add jsonbin Master Key in Settings','err');
+    openModal('settings-modal');
+    return;
+  }
+  S.settings.jbKey = key;
+  setSyncStatus('syncing');
+  try{
+    const binId = S.settings.jbBinId;
+    const url = binId ? `https://api.jsonbin.io/v3/b/${binId}` : 'https://api.jsonbin.io/v3/b';
+    const method = binId ? 'PUT' : 'POST';
+    const resp = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type':'application/json',
+        'X-Master-Key': key,
+        'X-Bin-Name': 'oto-os-data'
+      },
+      body: JSON.stringify(S)
+    });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    const data = await resp.json();
+    if(!binId){
+      S.settings.jbBinId = data.metadata.id;
+      $('set-jbbin').value = S.settings.jbBinId;
+    }
+    save();
+    setSyncStatus('synced');
+    toast('Synced to cloud');
+  } catch(e){
+    setSyncStatus('error');
+    toast('Sync failed: '+e.message,'err');
+  }
+}
+async function syncRestore(){
+  const key = $('set-jbkey').value || S.settings.jbKey;
+  const binId = $('set-jbbin').value || S.settings.jbBinId;
+  if(!key || !binId){ toast('Need key + Bin ID','err'); return; }
+  if(!confirm('This will REPLACE all local data with cloud version. Continue?')) return;
+  setSyncStatus('syncing');
+  try{
+    const resp = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+      headers: { 'X-Master-Key': key }
+    });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    const data = await resp.json();
+    const restored = data.record;
+    // preserve API key + sync settings
+    const kept = { apiKey:S.settings.apiKey, jbKey:S.settings.jbKey, jbBinId:S.settings.jbBinId };
+    S = restored;
+    S.settings = { ...S.settings, ...kept };
+    save();
+    setSyncStatus('synced');
+    toast('Restored from cloud');
+    closeModal('settings-modal');
+    renderAll();
+  } catch(e){
+    setSyncStatus('error');
+    toast('Restore failed: '+e.message,'err');
+  }
+}
+function setSyncStatus(s){
+  const el = $('sync-dot');
+  el.classList.remove('synced','syncing','error');
+  if(s) el.classList.add(s);
+}
+
+// ═══════════════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ═══════════════════════════════════════════════════════════
+function exportData(){
+  const blob = new Blob([JSON.stringify(S,null,2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `oto-os-${TODAY()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Exported');
+}
+function importData(){
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try{
+        const backup = JSON.parse(ev.target.result);
+        const kept = { apiKey:S.settings.apiKey, jbKey:S.settings.jbKey, jbBinId:S.settings.jbBinId, theme:S.settings.theme };
+        S = deepMerge(JSON.parse(JSON.stringify(DEFAULT_STATE)), backup);
+        S.settings = { ...S.settings, ...kept };
+        save();
+        toast('Data imported');
+        closeModal('settings-modal');
+        renderAll();
+      } catch(e){
+        toast('Import failed: invalid file','err');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════════════════
+function openModal(id){
+  $(id).classList.add('open');
+  if(id === 'settings-modal') loadSettingsForm();
+}
+function closeModal(id){ $(id).classList.remove('open'); }
+function bgClose(e, id){ if(e.target.id === id) closeModal(id); }
+
+// ═══════════════════════════════════════════════════════════
+// HEADER
+// ═══════════════════════════════════════════════════════════
+function renderHeader(){
+  const d = new Date();
+  const dateStr = d.toLocaleDateString('en-US',{ weekday:'long', month:'short', day:'numeric' }).toUpperCase();
+  $('hdr-date').textContent = dateStr;
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAIN RENDER
+// ═══════════════════════════════════════════════════════════
+function renderAll(){
+  renderHeader();
+  renderOverview();
+  renderBody();
+  renderSocial();
+  renderMoney();
+  renderBusiness();
+  renderCV();
+  renderPlan();
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+function init(){
+  // Apply theme
+  document.documentElement.setAttribute('data-theme', S.settings.theme || 'dark');
+
+  // Seed CV milestones if empty (first run)
+  if(S.cvGoals.length === 0){
+    seedCVMilestones();
+  }
+
+  // Show/hide API key banner
+  $('no-key-banner').style.display = S.settings.apiKey ? 'none' : 'block';
+
+  // First render
+  renderAll();
+}
+
+function seedCVMilestones(){
+  const seeds = [
+    // 2026 — Phase 1-3
+    { title:'PwC Latvia internship — start', deadline:'2026-06-01', priority:'high',
+      desc:'Internship #1 of 3. Goal: identify your PwC supervisor as Reference Letter #2 candidate. Do exceptional work and request the reference at the END of the internship while still fresh. Document specific deliverables (deal-specific work, models built, presentations made) for your CV.' },
+    { title:'GMAT Attempt #1 (baseline)', deadline:'2026-08-15', priority:'high',
+      desc:'Take in early-to-mid August BEFORE departing for NUS. This is your baseline — knowing your starting score is critical for planning improvement during exchange. Don\'t expect a target score here, this is diagnostic.' },
+    { title:'Request Reference #2 from PwC supervisor', deadline:'2026-08-31', priority:'high',
+      desc:'Get the reference "in the bank" before you leave for Singapore. Ask while the work is fresh in their mind. This is one of your two required reference letters for HEC/ESCP/Bocconi.' },
+    { title:'Depart for NUS Singapore exchange', deadline:'2026-08-15', priority:'high',
+      desc:'Exchange semester runs Aug 2026 — Jan 2027. Maintain academic excellence (grades transfer to Tilburg transcript). Network with NUS Business School finance students — they will be future global colleagues.' },
+    { title:'Identify NUS faculty for reference letter #3', deadline:'2026-11-30', priority:'med',
+      desc:'Build relationship with a NUS faculty member who could write a third reference. Even if not used immediately for this application cycle, useful for future applications (PhD, MBA, scholarships).' },
+    { title:'Begin drafting application essays', deadline:'2026-12-01', priority:'high',
+      desc:'Essay prompts are largely consistent year-over-year for HEC, ESCP, Bocconi, ESSEC. Start in Nov-Dec during exchange. First drafts of motivation + career goals essays for all 6 schools.' },
+    // 2027 — Phase 4
+    { title:'Return from NUS exchange', deadline:'2027-01-10', priority:'med',
+      desc:'Back in Tilburg. Critical profile-building phase begins now. Next 2 months are the most intense of the entire application cycle.' },
+    { title:'Join Tilburg Investment Club + leadership role', deadline:'2027-01-15', priority:'high',
+      desc:'Volunteer for a leadership/organizing role IMMEDIATELY — even a junior role demonstrates initiative on your CV. Investment Club is a key extracurricular signal for finance MFin admissions.' },
+    { title:'Bocconi Winter Session — SUBMIT (5 programs)', deadline:'2027-01-20', priority:'high',
+      desc:'Bocconi\'s unique advantage: ONE application covers UP TO 5 programs (€100 fee). Use this as "shot 1 of 2" — if rejected, Spring Session (April) is your safety net. List 5 programs to maximize seat allocation chances.' },
+    { title:'GMAT Attempt #2 (target 720+)', deadline:'2027-01-30', priority:'high',
+      desc:'This is your serious score attempt. Use the December break for intensive prep. Target 720+ (avg HEC ~700 classic / 645-655 GMAT Focus). This score will appear on most application submissions.' },
+    { title:'Begin M&A boutique internship #2', deadline:'2027-02-05', priority:'high',
+      desc:'Internship #2 of 3. Distinct from PwC — this should be M&A-specific (boutique IB or advisory). Listed on application as "in progress" which still counts. Critical for HEC/ESCP IB-track positioning.' },
+    { title:'Finalize all application essays', deadline:'2027-02-10', priority:'high',
+      desc:'All HEC, ESSEC, LBS, LSE essays in final form. Get 2-3 people (Investment Club seniors, PwC contacts, faculty) to review. Last week before submission deadlines hits.' },
+    { title:'HEC Round 3 — SUBMIT (priority #1)', deadline:'2027-02-15', priority:'high',
+      desc:'PRIORITY 1 SCHOOL. €190 fee. ONE-SHOT rule — cannot reapply if rejected. Round 3 chosen because R1/R2 close before GMAT/Internship #2/Investment Club credentials, R4 is most competitive. Estimated probability: ~35-45%.' },
+    { title:'ESSEC Round 2 — SUBMIT', deadline:'2027-02-15', priority:'high',
+      desc:'BACKUP #4. AMF (Advanced Master in Finance) — Corporate Finance track. Singapore campus synergy from your NUS exchange is relevant. ~€180 fee + €5,000 deposit on admission. Estimated probability: ~50-60%.' },
+    { title:'LBS MFA Stage 2 — SUBMIT', deadline:'2027-02-15', priority:'high',
+      desc:'BACKUP #5. London elite brand (9.5/10 reputation). Strongest pre-experience BB/EB pipeline in London. ~£53k tuition (~€62.5k). Reach school but worth one strong attempt.' },
+    { title:'LSE — SUBMIT', deadline:'2027-02-25', priority:'high',
+      desc:'BACKUP #6. MSc Finance / MSc Finance & Private Equity. Pure reach but reputation justifies one attempt. Submit BEFORE March peak rush — applications are rolling. ~£51k tuition.' },
+    { title:'ESCP Round 2 — SUBMIT (priority #2)', deadline:'2027-03-15', priority:'high',
+      desc:'PRIORITY 2 SCHOOL. €130 fee (€195 for two specialisations). Round 2 captures ~80-85% of peak profile with substantially larger seat pool than R3. FT #1 MiF for 3 years. Paris+London dual-campus is uniquely M&A-relevant. Estimated probability: ~45-55%.' },
+    // 2027 — Phase 5
+    { title:'Bocconi Spring Session — SUBMIT (priority #3)', deadline:'2027-04-10', priority:'high',
+      desc:'PRIORITY 3 SCHOOL. Only do this if Bocconi Winter rejected, OR submit anyway as additional shot. Italian IB feeder, Milan is genuine BB/EB hub, 64% of grads work outside Italy. Strong scholarship potential (Merit Award up to full tuition).' },
+    { title:'GMAT Attempt #3 if needed', deadline:'2027-04-30', priority:'med',
+      desc:'ONLY retake if scoring below target. If Attempt #2 was 730+, SKIP this — don\'t risk a worse score. Most schools accept your highest score, but a downward trend can hurt.' },
+    { title:'CFA Level 1 exam', deadline:'2027-05-15', priority:'med',
+      desc:'May exam window — register February-March 2027. Adds rigor to your CV. Not required but strong signal for finance recruiters and admissions.' },
+    { title:'Compare offers + scholarships, decide school', deadline:'2027-07-15', priority:'high',
+      desc:'Decisions arrive May-July. Compare admission offers AND scholarship offers (HEC Foundation, ESCP Merit, Bocconi Merit Award, France Excellence Europa). Pay deposit at chosen school.' },
+    // 2027 — Phase 6
+    { title:'M&A boutique summer internship #3 — start', deadline:'2027-06-01', priority:'high',
+      desc:'Internship #3 of 3 — listed on CV as upcoming/concurrent with Master\'s start. Continues building M&A-specific credentials.' },
+    { title:'Bachelor thesis finalization', deadline:'2027-08-01', priority:'high',
+      desc:'Final deliverable for IBA Tilburg degree. Required for graduation. Don\'t leave until last minute — chosen Master\'s school may want to see graded transcript.' },
+    { title:'Bachelor graduation', deadline:'2027-08-15', priority:'med',
+      desc:'IBA Tilburg honors program complete (top 10% of cohort). Diploma + final transcript needed for Master\'s enrollment.' },
+    { title:'Apply external scholarships', deadline:'2027-07-15', priority:'med',
+      desc:'France Excellence Europa (HEC/ESCP/ESSEC if admitted), Latvian Vītols Foundation, Belgian Fondation Francqui, Eiffel Excellence (must be nominated by school — apply Jan 2027).' },
+    { title:'Student visa + housing + insurance', deadline:'2027-08-15', priority:'high',
+      desc:'UK requires Tier 4 visa — apply by mid-June for September start (LBS/LSE). Housing in Paris/Milan/London is competitive — start search after deposit paid. Health insurance mandatory in EU + UK.' },
+    { title:'Master\'s program begins', deadline:'2027-09-01', priority:'high',
+      desc:'Goal achieved. Next chapter starts.' },
+  ];
+  seeds.forEach(s => {
+    S.cvGoals.push({
+      id: NOW() + Math.random(),
+      title: s.title,
+      deadline: s.deadline,
+      priority: s.priority,
+      desc: s.desc,
+      done: false,
+      ts: NOW()
+    });
+  });
+  save();
+}
+
+init();
+</script>
+</body>
+</html>
