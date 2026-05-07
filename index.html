@@ -857,9 +857,8 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
   </div>
 
   <div class="card">
-    <div class="ct">Today's Daily Targets <button class="btn sm" style="float:right;font-size:9px" onclick="showDebug()">Debug</button></div>
+    <div class="ct">Today's Daily Targets</div>
     <div id="daily-targets"></div>
-    <div id="debug-panel" style="display:none;background:var(--surface-2);border:1px solid var(--warn);padding:10px;border-radius:8px;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--text-2);white-space:pre-wrap;line-height:1.5;overflow-x:auto"></div>
   </div>
 
   <div class="card">
@@ -1604,7 +1603,17 @@ function renderDateStrip(pillar){
   const today = TODAY();
   if(!S.selectedDate[pillar]) S.selectedDate[pillar] = today;
   const dates = getNDaysBack(14);
-  el.innerHTML = dates.map(d => {
+  const isOnToday = S.selectedDate[pillar] === today;
+  
+  let warningBanner = '';
+  if(!isOnToday){
+    warningBanner = `<div style="background:rgba(245,158,11,.15);border:1px solid var(--warn);border-radius:var(--r-sm);padding:8px 12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <div style="font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--warn)">⚠ Logging to ${fmtDate(S.selectedDate[pillar])} — not today</div>
+      <button class="btn sm" onclick="selectDate('${pillar}','${today}')" style="font-size:10px">Jump to today</button>
+    </div>`;
+  }
+  
+  const stripHTML = dates.map(d => {
     const hasData = !!(S[pillar] && S[pillar][d] && Object.keys(S[pillar][d]).length>0);
     const isToday = d===today;
     const isActive = d===S.selectedDate[pillar];
@@ -1613,6 +1622,8 @@ function renderDateStrip(pillar){
       <div class="dc-num">${dayNum(d)}</div>
     </div>`;
   }).join('');
+  
+  el.innerHTML = warningBanner + '<div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">' + stripHTML + '</div>';
 }
 function selectDate(pillar, date){
   S.selectedDate[pillar] = date;
@@ -3871,6 +3882,19 @@ function renderAll(){
 function init(){
   // Apply theme
   document.documentElement.setAttribute('data-theme', S.settings.theme || 'dark');
+
+  // Reset stale selected dates to today so logging doesn't silently save to wrong dates
+  // If a selected date is more than 1 day old, snap back to today
+  const today = TODAY();
+  ['body','social','money','business','cv'].forEach(pillar => {
+    const sel = S.selectedDate[pillar];
+    if(sel && sel !== today){
+      const diff = Math.abs((new Date(today) - new Date(sel)) / 86400000);
+      if(diff > 1){
+        S.selectedDate[pillar] = today;
+      }
+    }
+  });
 
   // Seed CV milestones if empty (first run)
   if(S.cvGoals.length === 0){
