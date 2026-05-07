@@ -1831,7 +1831,19 @@ async function aiLogMeals(){
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1500,
-        system: `You are a nutrition extraction tool. Given a description of meals/food eaten, return ONLY a JSON array (no markdown, no explanation, no code fences) of meal objects with this exact shape: [{"name":"meal name","cal":<integer>,"prot":<integer>}]. Group items into logical meals (breakfast, lunch, dinner, snack) when possible, otherwise list each item as its own entry. Use realistic estimates based on standard portions if quantities aren't specified. For ambiguous foods, assume average preparation. Always return valid JSON only.`,
+        temperature: 0,
+        system: `You are a precise nutrition extraction tool. Given a description of meals/food eaten, return ONLY a JSON array (no markdown, no explanation, no code fences) of meal objects with this exact shape: [{"name":"meal name","cal":<integer>,"prot":<integer>}].
+
+RULES:
+1. If the user specifies portion sizes (grams, cups, pieces, "small/medium/large"), use those exact portions for your calculation.
+2. If portion is NOT specified, use these conservative defaults: chicken breast 150g, rice 100g cooked, eggs 50g each, bread 1 slice 30g, oil 1 tsp 5g, banana 120g, oats 50g dry.
+3. Group related items into logical meals (e.g. "breakfast: oatmeal + banana + eggs") when described together.
+4. List each separate meal/snack as its own object.
+5. Calories should be plausible total of all items in the meal. Protein should be the macro total in grams.
+6. For prepared/restaurant foods (e.g. "burger", "burrito"), assume standard fast-food sizing.
+7. NEVER under or over-estimate dramatically. Be conservative with "average" assumptions.
+
+Output JSON only, no other text.`,
         messages: [{ role:'user', content: text }]
       })
     });
