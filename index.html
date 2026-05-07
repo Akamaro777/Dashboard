@@ -1334,13 +1334,14 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
     </div>
 
     <div class="ct">Cloud Sync (jsonbin.io) · AUTO</div>
-    <div class="info">Auto-syncs across devices. Sign up free at jsonbin.io → API Keys → copy Master Key. Paste below + tap "Backup now" once. After that, every change auto-syncs within 3s, and the app pulls latest data on every open.</div>
+    <div class="info">Auto-syncs across devices once configured. <b>Setup on each device:</b> 1) Paste same Master Key on both devices. 2) On first device, tap "Backup now" — it creates a Bin ID automatically. 3) Copy that Bin ID and paste it on second device's Bin ID field. 4) Tap "Restore" on second device to pull data. Once both devices share the same Bin ID, all changes auto-sync within ~1s.</div>
     <div class="fg"><label>jsonbin Master Key</label><input type="password" id="set-jbkey" placeholder="$2a$…"></div>
-    <div class="fg"><label>Bin ID (auto-created on first sync)</label><input type="text" id="set-jbbin" placeholder="auto"></div>
+    <div class="fg"><label>Bin ID (must match across devices)</label><input type="text" id="set-jbbin" placeholder="leave blank on first device to auto-create"></div>
     <div class="row gap8 mb16">
       <button class="btn primary" style="flex:1" onclick="syncNow()">⇅ Backup now</button>
       <button class="btn" style="flex:1" onclick="syncRestore()">⇊ Restore</button>
     </div>
+    <div id="sync-status-display" style="font-family:var(--mono);font-size:10px;color:var(--text-3);margin-bottom:12px;text-align:center"></div>
 
     <div class="ct">Data</div>
     <div class="row gap8 mb16">
@@ -3741,6 +3742,16 @@ function loadSettingsForm(){
   $('set-jbbin').value = S.settings.jbBinId || '';
   $('set-t212-url').value = S.settings.t212ProxyUrl || '';
   $('set-t212-secret').value = S.settings.t212ProxySecret || '';
+  // Show sync status
+  const statusEl = $('sync-status-display');
+  if(statusEl){
+    if(S.settings.jbBinId && S.settings.jbKey){
+      const lastMod = S._lastModified ? new Date(S._lastModified).toLocaleString() : 'never';
+      statusEl.innerHTML = `Connected to bin: <b style="color:var(--text-2)">${S.settings.jbBinId.slice(-8)}</b> · Last sync: ${lastMod} · Dirty: ${_isDirty?'YES':'no'}`;
+    } else {
+      statusEl.innerHTML = `<span style="color:var(--warn)">Not configured</span>`;
+    }
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -3754,6 +3765,12 @@ async function syncNow(){
     return;
   }
   S.settings.jbKey = key;
+  // CRITICAL: read bin ID from input field FIRST, fall back to stored value
+  // This prevents accidentally creating a new bin when the user has typed an existing one
+  const inputBinId = $('set-jbbin').value.trim();
+  if(inputBinId){
+    S.settings.jbBinId = inputBinId;
+  }
   setSyncStatus('syncing');
   try{
     const binId = S.settings.jbBinId;
@@ -3776,7 +3793,7 @@ async function syncNow(){
     }
     save();
     setSyncStatus('synced');
-    toast('Synced to cloud');
+    toast('Synced to cloud · bin ' + S.settings.jbBinId.slice(-6));
   } catch(e){
     setSyncStatus('error');
     toast('Sync failed: '+e.message,'err');
@@ -3784,9 +3801,12 @@ async function syncNow(){
 }
 async function syncRestore(){
   const key = $('set-jbkey').value || S.settings.jbKey;
-  const binId = $('set-jbbin').value || S.settings.jbBinId;
+  const binId = $('set-jbbin').value.trim() || S.settings.jbBinId;
   if(!key || !binId){ toast('Need key + Bin ID','err'); return; }
   if(!confirm('This will REPLACE all local data with cloud version. Continue?')) return;
+  // SAVE the bin ID before restore so restore doesn't overwrite it
+  S.settings.jbBinId = binId;
+  S.settings.jbKey = key;
   setSyncStatus('syncing');
   try{
     const resp = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
@@ -3795,13 +3815,20 @@ async function syncRestore(){
     if(!resp.ok) throw new Error('HTTP '+resp.status);
     const data = await resp.json();
     const restored = data.record;
-    // preserve API key + sync settings
-    const kept = { apiKey:S.settings.apiKey, jbKey:S.settings.jbKey, jbBinId:S.settings.jbBinId };
+    // preserve credentials AND the bin ID we just used (so we keep talking to same bin)
+    const kept = { 
+      apiKey: S.settings.apiKey, 
+      jbKey: key, 
+      jbBinId: binId,
+      t212ProxyUrl: S.settings.t212ProxyUrl,
+      t212ProxySecret: S.settings.t212ProxySecret,
+      theme: S.settings.theme
+    };
     S = restored;
     S.settings = { ...S.settings, ...kept };
     save();
     setSyncStatus('synced');
-    toast('Restored from cloud');
+    toast('Restored from cloud · bin ' + binId.slice(-6));
     closeModal('settings-modal');
     renderAll();
   } catch(e){
