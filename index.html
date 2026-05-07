@@ -857,8 +857,9 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
   </div>
 
   <div class="card">
-    <div class="ct">Today's Daily Targets</div>
+    <div class="ct">Today's Daily Targets <button class="btn sm" style="float:right;font-size:9px" onclick="showDebug()">Debug</button></div>
     <div id="daily-targets"></div>
+    <div id="debug-panel" style="display:none;background:var(--surface-2);border:1px solid var(--warn);padding:10px;border-radius:8px;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--text-2);white-space:pre-wrap;line-height:1.5;overflow-x:auto"></div>
   </div>
 
   <div class="card">
@@ -3141,6 +3142,46 @@ function linearCard(pillar, label, bigNum, sub, pct, expectedPct, status, status
 // ═══════════════════════════════════════════════════════════
 // DAILY TARGETS - Lower section of home
 // ═══════════════════════════════════════════════════════════
+function showDebug(){
+  const el = $('debug-panel');
+  if(!el) return;
+  if(el.style.display !== 'none' && el.innerHTML.length > 10){
+    el.style.display = 'none';
+    return;
+  }
+  const today = TODAY();
+  const allMealKeys = Object.keys(S.meals || {});
+  const allBodyKeys = Object.keys(S.body || {});
+  const allMoneyKeys = Object.keys(S.money || {});
+  const todayMeals = S.meals[today];
+  const totalCal = (todayMeals||[]).reduce((s,m)=>s+(m.cal||0),0);
+  const totalProt = (todayMeals||[]).reduce((s,m)=>s+(m.prot||0),0);
+
+  let lines = [];
+  lines.push('=== DEBUG ===');
+  lines.push('TODAY() returns: ' + today);
+  lines.push('Browser local time: ' + new Date().toString().slice(0,33));
+  lines.push('UTC time: ' + new Date().toUTCString());
+  lines.push('');
+  lines.push('S.meals dates: ' + (allMealKeys.length ? allMealKeys.join(', ') : 'EMPTY'));
+  lines.push('S.body dates: ' + (allBodyKeys.length ? allBodyKeys.join(', ') : 'EMPTY'));
+  lines.push('S.money dates: ' + (allMoneyKeys.length ? allMoneyKeys.join(', ') : 'EMPTY'));
+  lines.push('');
+  lines.push('S.meals[' + today + ']: ' + JSON.stringify(todayMeals));
+  lines.push('Today total cal: ' + totalCal);
+  lines.push('Today total prot: ' + totalProt);
+  lines.push('');
+  lines.push('S.profile.calTarget: ' + S.profile.calTarget);
+  lines.push('S.profile.protTarget: ' + S.profile.protTarget);
+  lines.push('');
+  lines.push('activeTab: ' + activeTab);
+  lines.push('Last modified: ' + new Date(S._lastModified || 0).toString().slice(0,33));
+  lines.push('');
+  lines.push('Tap Debug again to hide');
+  el.textContent = lines.join('\n');
+  el.style.display = 'block';
+}
+
 function renderDailyTargets(){
   const el = $('daily-targets');
   if(!el) return;
