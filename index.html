@@ -173,6 +173,335 @@ nav::-webkit-scrollbar{display:none}
 .stat.money .stat-v{color:var(--money)}
 .stat.cv .stat-v{color:var(--cv)}
 
+/* ── NORTH STAR GRID ── */
+.ns-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+}
+@media(min-width:540px){.ns-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:840px){.ns-grid{grid-template-columns:repeat(4,1fr)}}
+
+.ns-card{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);
+  padding:14px 12px;position:relative;overflow:hidden;
+  border-top-width:2px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  min-height:180px;
+}
+.ns-card.body{border-top-color:var(--body)}
+.ns-card.money{border-top-color:var(--money)}
+.ns-card.business{border-top-color:var(--money)}
+.ns-card.cv{border-top-color:var(--cv)}
+.ns-card.social-app{border-top-color:var(--social)}
+.ns-card.social-cmp{border-top-color:var(--social)}
+.ns-card.social-cnn{border-top-color:var(--social)}
+
+.ns-label{
+  font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--text-3);text-align:center;line-height:1.3;
+}
+.ns-deadline{
+  font-family:var(--mono);font-size:8px;color:var(--text-3);text-transform:uppercase;
+  letter-spacing:.1em;text-align:center;
+}
+.ns-current{
+  font-family:var(--serif);font-size:24px;font-weight:400;letter-spacing:-.025em;line-height:1;
+}
+.ns-target{
+  font-family:var(--mono);font-size:10px;color:var(--text-3);
+}
+.ns-status{
+  font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.08em;padding:2px 8px;border-radius:99px;background:var(--surface-3);
+  margin-top:auto;
+}
+.ns-status.ahead{color:var(--money);background:rgba(74,222,128,.12)}
+.ns-status.ontrack{color:var(--text-2)}
+.ns-status.behind{color:var(--warn);background:rgba(251,191,36,.12)}
+.ns-status.danger{color:var(--danger);background:rgba(248,113,113,.12)}
+.ns-status.complete{color:var(--accent);background:rgba(201,241,88,.15)}
+
+/* Circular progress */
+.circ-wrap{position:relative;width:110px;height:110px;display:flex;align-items:center;justify-content:center}
+.circ-svg{width:110px;height:110px;transform:rotate(-90deg)}
+.circ-bg{fill:none;stroke:var(--surface-3);stroke-width:8}
+.circ-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.16,1,.3,1)}
+.circ-fill.body{stroke:var(--body)}
+.circ-fill.money{stroke:var(--money)}
+.circ-fill.business{stroke:var(--money)}
+.circ-fill.cv{stroke:var(--cv)}
+.circ-fill.social{stroke:var(--social)}
+.circ-text{
+  position:absolute;display:flex;flex-direction:column;align-items:center;gap:0;
+}
+.circ-pct{font-family:var(--serif);font-size:24px;line-height:1;letter-spacing:-.025em}
+.circ-sub{font-family:var(--mono);font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+
+/* Linear bar variant */
+.ns-linear{display:flex;flex-direction:column;width:100%;gap:8px;padding:6px 0}
+.ns-linear-bar{
+  height:10px;background:var(--surface-3);border-radius:99px;overflow:hidden;
+  border:1px solid var(--border);position:relative;
+}
+.ns-linear-fill{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.16,1,.3,1)}
+.ns-linear-fill.body{background:linear-gradient(90deg,var(--body),#ffb380)}
+.ns-linear-fill.money{background:linear-gradient(90deg,var(--money),#86efac)}
+.ns-linear-fill.business{background:linear-gradient(90deg,var(--money),#86efac)}
+.ns-linear-fill.cv{background:linear-gradient(90deg,var(--cv),#bae6fd)}
+.ns-linear-fill.social{background:linear-gradient(90deg,var(--social),#ffd6ff)}
+.ns-linear-pace{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--text);opacity:.4;border-radius:1px}
+.ns-linear-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--text-2);width:100%}
+
+/* ── DAILY TARGETS ── */
+.dt-grid{display:flex;flex-direction:column;gap:10px}
+.dt-row{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);
+  padding:12px 14px;border-left-width:3px;
+}
+.dt-row.body{border-left-color:var(--body)}
+.dt-row.money{border-left-color:var(--money)}
+.dt-row.business{border-left-color:var(--money)}
+.dt-row.cv{border-left-color:var(--cv)}
+.dt-row.social{border-left-color:var(--social)}
+.dt-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;gap:10px;flex-wrap:wrap}
+.dt-title{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--text-2)}
+.dt-status{font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:2px 8px;border-radius:99px;background:var(--surface-3);color:var(--text-2)}
+.dt-status.complete{color:var(--accent);background:rgba(201,241,88,.15)}
+.dt-status.partial{color:var(--warn);background:rgba(251,191,36,.12)}
+.dt-bars{display:flex;flex-direction:column;gap:6px}
+.dt-bar-row{display:flex;align-items:center;gap:10px}
+.dt-bar-label{font-family:var(--mono);font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;min-width:70px}
+.dt-bar-bar{flex:1;height:6px;background:var(--surface-3);border-radius:99px;overflow:hidden;border:1px solid var(--border)}
+.dt-bar-fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.16,1,.3,1)}
+.dt-bar-fill.body{background:var(--body)}
+.dt-bar-fill.money{background:var(--money)}
+.dt-bar-fill.business{background:var(--money)}
+.dt-bar-fill.cv{background:var(--cv)}
+.dt-bar-fill.social{background:var(--social)}
+.dt-bar-num{font-family:var(--mono);font-size:11px;font-weight:600;min-width:80px;text-align:right;color:var(--text)}
+
+/* Social mini cells already styled via .daily-cell */
+
+/* ── GYM WEEK TRACKER ── */
+.gym-week{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}
+.gym-cell{
+  background:var(--surface-2);border:1.5px solid var(--border);border-radius:var(--r-sm);
+  padding:14px 6px;text-align:center;cursor:pointer;transition:all .15s;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.gym-cell:hover{border-color:var(--border-2);background:var(--surface-3)}
+.gym-cell.done{border-color:var(--body);background:rgba(251,146,60,.1)}
+.gym-cell-icon{font-size:22px;line-height:1}
+.gym-cell-label{font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2)}
+.gym-cell.done .gym-cell-label{color:var(--body)}
+.gym-cell-status{font-family:var(--mono);font-size:8px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em}
+.gym-cell.done .gym-cell-status{color:var(--body)}
+.gym-week-meta{display:flex;justify-content:space-between;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em}
+
+/* ── GOAL PROGRESS ── */
+.goal-row{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);
+  padding:14px;margin-bottom:10px;position:relative;overflow:hidden;
+  border-left-width:3px;
+}
+.goal-row.body{border-left-color:var(--body)}
+.goal-row.social{border-left-color:var(--social)}
+.goal-row.money{border-left-color:var(--money)}
+.goal-row.business{border-left-color:var(--money)}
+.goal-row.cv{border-left-color:var(--cv)}
+.goal-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.goal-title{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--text-2)}
+.goal-deadline{font-family:var(--mono);font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em}
+.goal-num{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+.goal-current{font-family:var(--serif);font-size:30px;font-weight:400;letter-spacing:-.025em;line-height:1}
+.goal-arrow{font-family:var(--mono);font-size:13px;color:var(--text-3)}
+.goal-target{font-family:var(--mono);font-size:14px;color:var(--text-2);font-weight:500}
+.goal-bar{
+  height:8px;background:var(--surface-3);border-radius:99px;overflow:hidden;border:1px solid var(--border);
+  position:relative;
+}
+.goal-bar-fill{
+  height:100%;border-radius:99px;transition:width .8s cubic-bezier(.16,1,.3,1);
+  position:relative;
+}
+.goal-bar.body .goal-bar-fill{background:linear-gradient(90deg,var(--body),#ffb380)}
+.goal-bar.social .goal-bar-fill{background:linear-gradient(90deg,var(--social),#ffd6ff)}
+.goal-bar.money .goal-bar-fill{background:linear-gradient(90deg,var(--money),#86efac)}
+.goal-bar.business .goal-bar-fill{background:linear-gradient(90deg,var(--money),#86efac)}
+.goal-bar.cv .goal-bar-fill{background:linear-gradient(90deg,var(--cv),#bae6fd)}
+.goal-bar-pace{
+  position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--text);
+  opacity:.4;border-radius:1px;
+}
+.goal-meta{display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em}
+.goal-status{font-weight:600}
+.goal-status.ahead{color:var(--money)}
+.goal-status.ontrack{color:var(--text-2)}
+.goal-status.behind{color:var(--warn)}
+.goal-status.danger{color:var(--danger)}
+.goal-status.complete{color:var(--accent)}
+
+/* Daily goal mini bars */
+.daily-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.daily-cell{
+  background:var(--surface-3);border:1px solid var(--border);border-radius:var(--r-sm);
+  padding:10px 8px;text-align:center;transition:all .15s;
+}
+.daily-cell.done{border-color:var(--accent);background:rgba(201,241,88,.06)}
+.daily-cell-v{font-family:var(--serif);font-size:22px;font-weight:400;line-height:1;letter-spacing:-.02em}
+.daily-cell-l{font-family:var(--mono);font-size:8px;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+.daily-cell.done .daily-cell-v{color:var(--accent)}
+
+/* ── NORTH STAR — CIRCULAR + LINEAR ── */
+.ns-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+}
+@media(min-width:560px){.ns-grid{grid-template-columns:repeat(3,1fr)}}
+
+.ns-card{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);
+  padding:18px 14px;text-align:center;position:relative;overflow:hidden;
+  transition:all .2s;border-top-width:3px;
+}
+.ns-card:hover{border-color:var(--border-2)}
+.ns-card.body{border-top-color:var(--body)}
+.ns-card.money{border-top-color:var(--money)}
+.ns-card.business{border-top-color:var(--money)}
+.ns-card.cv{border-top-color:var(--cv)}
+.ns-card.social{border-top-color:var(--social)}
+
+.ns-label{
+  font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--text-3);margin-bottom:10px;
+}
+
+/* Circular progress */
+.ns-circle{
+  position:relative;width:120px;height:120px;margin:0 auto 10px;
+}
+.ns-circle svg{transform:rotate(-90deg)}
+.ns-circle-bg{fill:none;stroke:var(--surface-3);stroke-width:8}
+.ns-circle-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.16,1,.3,1)}
+.ns-card.body .ns-circle-fill{stroke:var(--body)}
+.ns-card.money .ns-circle-fill{stroke:var(--money)}
+.ns-card.business .ns-circle-fill{stroke:var(--money)}
+.ns-card.cv .ns-circle-fill{stroke:var(--cv)}
+.ns-card.social .ns-circle-fill{stroke:var(--social)}
+.ns-circle-text{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+.ns-circle-pct{font-family:var(--serif);font-size:32px;font-weight:400;line-height:1;letter-spacing:-.025em}
+.ns-circle-sub{font-family:var(--mono);font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+
+/* Linear bar (for big numbers) */
+.ns-linear{padding:6px 0 4px}
+.ns-linear-num{
+  font-family:var(--serif);font-size:34px;font-weight:400;line-height:1;
+  letter-spacing:-.025em;margin-bottom:4px;
+}
+.ns-linear-sub{
+  font-family:var(--mono);font-size:9px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;
+}
+.ns-linear-bar{
+  height:6px;background:var(--surface-3);border-radius:99px;overflow:hidden;
+  border:1px solid var(--border);position:relative;
+}
+.ns-linear-fill{
+  height:100%;border-radius:99px;transition:width .8s cubic-bezier(.16,1,.3,1);
+}
+.ns-card.body .ns-linear-fill{background:linear-gradient(90deg,var(--body),#ffb380)}
+.ns-card.money .ns-linear-fill{background:linear-gradient(90deg,var(--money),#86efac)}
+.ns-card.business .ns-linear-fill{background:linear-gradient(90deg,var(--money),#86efac)}
+.ns-card.cv .ns-linear-fill{background:linear-gradient(90deg,var(--cv),#bae6fd)}
+.ns-card.social .ns-linear-fill{background:linear-gradient(90deg,var(--social),#ffd6ff)}
+
+.ns-linear-pace{
+  position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--text);opacity:.4;border-radius:1px;
+}
+
+.ns-foot{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:10px;font-family:var(--mono);font-size:9px;
+  color:var(--text-3);text-transform:uppercase;letter-spacing:.1em;
+}
+.ns-status{font-weight:600}
+.ns-status.ahead{color:var(--money)}
+.ns-status.ontrack{color:var(--text-2)}
+.ns-status.behind{color:var(--warn)}
+.ns-status.danger{color:var(--danger)}
+.ns-status.complete{color:var(--accent)}
+
+/* ── DAILY TARGETS ── */
+.dt-grid{
+  display:grid;grid-template-columns:1fr;gap:10px;
+}
+@media(min-width:560px){.dt-grid{grid-template-columns:1fr 1fr}}
+.dt-card{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);
+  padding:14px;border-left-width:3px;
+}
+.dt-card.body{border-left-color:var(--body)}
+.dt-card.money{border-left-color:var(--money)}
+.dt-card.business{border-left-color:var(--money)}
+.dt-card.cv{border-left-color:var(--cv)}
+.dt-card.social{border-left-color:var(--social)}
+.dt-head{
+  display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;
+}
+.dt-title{
+  font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--text-2);
+}
+.dt-status-inline{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+.dt-status-inline.done{color:var(--accent)}
+.dt-status-inline.partial{color:var(--text-2)}
+.dt-status-inline.zero{color:var(--text-3)}
+
+.dt-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dt-bar-row:last-child{margin-bottom:0}
+.dt-bar-label{
+  font-family:var(--mono);font-size:10px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.08em;flex-shrink:0;width:60px;
+}
+.dt-bar-track{flex:1;height:5px;background:var(--surface-3);border-radius:99px;overflow:hidden;border:1px solid var(--border)}
+.dt-bar-fill{height:100%;border-radius:99px;transition:width .6s ease}
+.dt-card.body .dt-bar-fill{background:var(--body)}
+.dt-card.money .dt-bar-fill{background:var(--money)}
+.dt-card.business .dt-bar-fill{background:var(--money)}
+.dt-card.cv .dt-bar-fill{background:var(--cv)}
+.dt-card.social .dt-bar-fill{background:var(--social)}
+.dt-bar-num{
+  font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text-2);
+  flex-shrink:0;text-align:right;min-width:80px;
+}
+
+.dt-mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px}
+.dt-mini{
+  background:var(--surface-3);border:1px solid var(--border);border-radius:var(--r-sm);
+  padding:8px 6px;text-align:center;transition:all .15s;
+}
+.dt-mini.done{border-color:var(--accent);background:rgba(201,241,88,.08)}
+.dt-mini-v{font-family:var(--serif);font-size:18px;font-weight:400;line-height:1;letter-spacing:-.02em}
+.dt-mini.done .dt-mini-v{color:var(--accent)}
+.dt-mini-l{font-family:var(--mono);font-size:8px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-top:3px}
+
+/* ── GYM WEEK GRID ── */
+.gym-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.gym-cell{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);
+  padding:14px 6px;text-align:center;cursor:pointer;transition:all .15s;
+}
+.gym-cell:hover{border-color:var(--border-2)}
+.gym-cell.done{
+  background:rgba(251,146,60,.08);border-color:var(--body);
+}
+.gym-cell.done .gym-icon{filter:none}
+.gym-icon{font-size:22px;line-height:1;margin-bottom:6px;filter:grayscale(80%) opacity(.5)}
+.gym-name{font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text-2)}
+.gym-cell.done .gym-name{color:var(--body)}
+.gym-date{font-family:var(--mono);font-size:8px;color:var(--text-3);margin-top:3px}
+
 /* ── PROGRESS ── */
 .pw{margin:10px 0}
 .pl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;margin-bottom:6px;color:var(--text-2)}
@@ -509,37 +838,14 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
     <div class="hero-sub" id="hero-sub">Loading day briefing…</div>
   </div>
 
-  <div class="g2 mb12">
-    <div class="pillar-card body" onclick="switchTab('body')">
-      <div class="ph"><span class="pname body">Body</span><span class="badge body" id="ph-body-streak">0d</span></div>
-      <div class="pscore" id="ph-body-score" style="color:var(--body)">—</div>
-      <div class="pdesc" id="ph-body-desc">No log today</div>
-    </div>
-    <div class="pillar-card social" onclick="switchTab('social')">
-      <div class="ph"><span class="pname social">Social</span><span class="badge social" id="ph-social-streak">0d</span></div>
-      <div class="pscore" id="ph-social-score" style="color:var(--social)">—</div>
-      <div class="pdesc" id="ph-social-desc">No log today</div>
-    </div>
-    <div class="pillar-card money" onclick="switchTab('money')">
-      <div class="ph"><span class="pname money">Money</span><span class="badge money" id="ph-money-trend">—</span></div>
-      <div class="pscore" id="ph-money-score" style="color:var(--money)">€—</div>
-      <div class="pdesc" id="ph-money-desc">Portfolio</div>
-    </div>
-    <div class="pillar-card money" onclick="switchTab('business')">
-      <div class="ph"><span class="pname money">Business</span><span class="badge money" id="ph-biz-streak">0d</span></div>
-      <div class="pscore" id="ph-biz-score" style="color:var(--money)">—</div>
-      <div class="pdesc" id="ph-biz-desc">0h on business</div>
-    </div>
-    <div class="pillar-card cv" onclick="switchTab('cv')" style="grid-column:1 / -1">
-      <div class="ph"><span class="pname cv">CV</span><span class="badge cv" id="ph-cv-streak">0d</span></div>
-      <div class="pscore" id="ph-cv-score" style="color:var(--cv)">—</div>
-      <div class="pdesc" id="ph-cv-desc">0 problems</div>
-    </div>
+  <div class="card">
+    <div class="ct">★ North Star Goals</div>
+    <div id="north-stars"></div>
   </div>
 
   <div class="card">
-    <div class="ct">7-Day Trajectory</div>
-    <canvas id="overview-chart" class="chart-wrap"></canvas>
+    <div class="ct">Today's Daily Targets</div>
+    <div id="daily-targets"></div>
   </div>
 
   <div class="card">
@@ -602,6 +908,22 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
     </div>
 
     <div>
+      <div class="card card-pillar card-body">
+        <div class="ct">Gym Week · 5 sessions</div>
+        <div class="info" style="margin-bottom:0">Goal: hit each session at least once per week. Resets every Monday.</div>
+        <div class="gym-week" id="gym-week-grid"></div>
+        <div class="gym-week-meta">
+          <span id="gym-week-label">Week of —</span>
+          <span id="gym-week-status">0 / 5 done</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Gym Sessions This Week <span class="pill" id="gym-week-label">—</span></div>
+        <div class="info">Goal: 1× of each per week. Tap to mark complete for today.</div>
+        <div class="gym-grid" id="gym-sessions-grid"></div>
+      </div>
+
       <div class="card">
         <div class="ct">Training Today</div>
         <div class="row between mb12">
@@ -823,6 +1145,18 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
     </div>
 
     <div>
+      <div class="card card-pillar card-cv">
+        <div class="ct">Mock Exams · Target 700 by Jan 30</div>
+        <div class="g2">
+          <div class="fg"><label>Score</label><input type="number" id="mock-score-in" placeholder="e.g. 555" min="200" max="800"></div>
+          <div class="fg"><label>Date</label><input type="date" id="mock-date-in"></div>
+        </div>
+        <button class="btn primary wf" onclick="addMockExam()">Log mock exam</button>
+        <div class="divider"></div>
+        <canvas id="mock-chart" class="chart-wrap"></canvas>
+        <div id="mock-list" style="margin-top:10px"></div>
+      </div>
+
       <div class="card">
         <div class="ct">Active CV Goals <span class="pill" id="cv-goals-count">0</span></div>
         <div id="cv-goals-list"><div class="empty">No active CV goals — add one below</div></div>
@@ -836,7 +1170,7 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
       </div>
 
       <div class="card">
-        <div class="ct">GMAT Accuracy Trend (30d)</div>
+        <div class="ct">GMAT Problems / Day (30d)</div>
         <canvas id="cv-chart" class="chart-wrap"></canvas>
       </div>
     </div>
@@ -845,7 +1179,7 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
 
 <!-- ═══════════════ PLAN ═══════════════ -->
 <section id="tab-plan" class="tab">
-  <div class="sec-title">Plan</div>
+  <div class="sec-title">Schedule</div>
   <div class="sec-sub">Voice → AI → calendar</div>
 
   <div class="card card-pillar card-cv">
@@ -922,7 +1256,7 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
   <button class="ni" id="nav-money" onclick="switchTab('money')"><span class="ic">€</span><span>Money</span></button>
   <button class="ni" id="nav-business" onclick="switchTab('business')"><span class="ic">⌘</span><span>Biz</span></button>
   <button class="ni" id="nav-cv" onclick="switchTab('cv')"><span class="ic">▲</span><span>CV</span></button>
-  <button class="ni" id="nav-plan" onclick="switchTab('plan')"><span class="ic">◐</span><span>Plan</span></button>
+  <button class="ni" id="nav-plan" onclick="switchTab('plan')"><span class="ic">◐</span><span>Schedule</span></button>
   <button class="ni" id="nav-mentor" onclick="switchTab('mentor')"><span class="ic">✦</span><span>Mentor</span></button>
 </nav>
 
@@ -939,13 +1273,38 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
     </div>
     <div class="g2">
       <div class="fg"><label>Target weight (kg)</label><input type="number" id="set-target-weight" value="79"></div>
-      <div class="fg"><label>Daily calorie target</label><input type="number" id="set-cal" value="3000"></div>
+      <div class="fg"><label>Daily calorie target</label><input type="number" id="set-cal" value="4000"></div>
     </div>
     <div class="g2">
-      <div class="fg"><label>Daily protein target (g)</label><input type="number" id="set-prot" value="180"></div>
+      <div class="fg"><label>Daily protein target (g)</label><input type="number" id="set-prot" value="200"></div>
       <div class="fg"><label>Business hours/day target</label><input type="number" id="set-biz" value="2" step="0.5"></div>
     </div>
     <button class="btn primary wf mb16" onclick="saveSettings()">Save profile</button>
+
+    <div class="ct">North Star Goals</div>
+    <div class="info">These appear on your home page as progress bars with pace tracking.</div>
+    <div class="g2">
+      <div class="fg"><label>Bulk target weight (kg)</label><input type="number" id="set-bulk-w" step="0.1"></div>
+      <div class="fg"><label>Bulk target date</label><input type="date" id="set-bulk-d"></div>
+    </div>
+    <div class="g2">
+      <div class="fg"><label>Cut target weight (kg)</label><input type="number" id="set-cut-w" step="0.1"></div>
+      <div class="fg"><label>Cut target date</label><input type="date" id="set-cut-d"></div>
+    </div>
+    <div class="g2">
+      <div class="fg"><label>Portfolio target (€)</label><input type="number" id="set-port-tgt"></div>
+      <div class="fg"><label>Portfolio target date</label><input type="date" id="set-port-d"></div>
+    </div>
+    <div class="g2">
+      <div class="fg"><label>GMAT problems / day</label><input type="number" id="set-gmat-tgt"></div>
+      <div class="fg"><label>Business hours / day</label><input type="number" id="set-biz-tgt" step="0.5"></div>
+    </div>
+    <div class="g3">
+      <div class="fg"><label>Daily approaches</label><input type="number" id="set-soc-app"></div>
+      <div class="fg"><label>Daily compliments</label><input type="number" id="set-soc-cmp"></div>
+      <div class="fg"><label>Daily connections</label><input type="number" id="set-soc-cnn"></div>
+    </div>
+    <button class="btn primary wf mb16" onclick="saveGoalsSettings()">Save goals</button>
 
     <div class="ct">AI Mentor</div>
     <div class="info">Get your key at console.anthropic.com — stored locally only</div>
@@ -1017,7 +1376,18 @@ const TODAY = () => new Date().toISOString().slice(0,10);
 const NOW = () => Date.now();
 
 const DEFAULT_STATE = {
-  profile: { name:'Oto', weight:74, targetWeight:79, calTarget:3000, protTarget:180, bizTarget:2 },
+  profile: {
+    name:'Oto', weight:74, targetWeight:79, calTarget:4000, protTarget:200, bizTarget:2,
+    bulkTargetWeight: 75, bulkTargetDate: '2026-05-17',
+    cutTargetWeight: 70, cutTargetDate: '2026-08-01',
+    portfolioTarget: 10000, portfolioTargetDate: '2026-08-01',
+    gmatDailyTarget: 50,
+    bizCumulativeTarget: 172, bizCumulativeDate: '2026-08-01',
+    gmatCumulativeTarget: 4300, gmatCumulativeDate: '2026-08-01',
+    gmatScoreTarget: 700, gmatScoreTargetDate: '2027-01-30',
+    socialApproachTarget: 86, socialComplimentTarget: 86, socialConnectionTarget: 86, socialCumulativeDate: '2026-08-01',
+    socialDailyApproaches: 1, socialDailyCompliments: 1, socialDailyConnections: 1
+  },
   settings: { theme:'dark', apiKey:'', jbKey:'', jbBinId:'', t212ProxyUrl:'', t212ProxySecret:'' },
   // Daily logs keyed by date (YYYY-MM-DD)
   body: {},   // { date: { weight, sleep, water, gym, gymNotes, cardio, cardioKm, cardioMin } }
@@ -1030,6 +1400,8 @@ const DEFAULT_STATE = {
   portfolio: [], // [ {date, value, ts} ]
   cvGoals: [],  // [ {id, title, deadline, priority, done, ts} ]
   events: [],   // [ {id, title, date, time, category, notes, ts} ]
+  gymSessions: {}, // { 'YYYY-Www': { push: 'YYYY-MM-DD', pull: '...', legs: '...', abs: '...', stretch: '...' } }
+  mockExams: [],   // [ {id, date, score, ts} ]
   chat: [],
   selectedDate: { body:'', social:'', money:'', business:'', cv:'' },
 };
@@ -1206,6 +1578,56 @@ function saveBodyTraining(){
   renderBody();
   toast('Training saved');
 }
+
+// ─── GYM SESSIONS WEEKLY ───
+const GYM_TYPES = [
+  { key: 'push',    icon: '🏋️',  name: 'Push' },
+  { key: 'pull',    icon: '💪',  name: 'Pull' },
+  { key: 'legs',    icon: '🦵',  name: 'Legs' },
+  { key: 'abs',     icon: '🔥',  name: 'Abs' },
+  { key: 'stretch', icon: '🧘',  name: 'Stretch' }
+];
+function getWeekKey(date){
+  // ISO week: YYYY-Www
+  const d = new Date(date+'T12:00:00');
+  d.setHours(0,0,0,0);
+  // Thursday in current week decides the year
+  d.setDate(d.getDate() + 3 - (d.getDay()+6)%7);
+  const week1 = new Date(d.getFullYear(), 0, 4);
+  const weekNum = 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay()+6)%7) / 7);
+  return `${d.getFullYear()}-W${String(weekNum).padStart(2,'0')}`;
+}
+function toggleGymSession(type){
+  const today = TODAY();
+  const wk = getWeekKey(today);
+  if(!S.gymSessions) S.gymSessions = {};
+  if(!S.gymSessions[wk]) S.gymSessions[wk] = {};
+  if(S.gymSessions[wk][type]){
+    delete S.gymSessions[wk][type];
+    toast(`${type} unmarked`);
+  } else {
+    S.gymSessions[wk][type] = today;
+    toast(`✓ ${type} done`);
+  }
+  save();
+  renderGymGrid();
+  renderBody();
+}
+function renderGymGrid(){
+  const grid = $('gym-sessions-grid');
+  if(!grid) return;
+  const wk = getWeekKey(TODAY());
+  const wkData = (S.gymSessions && S.gymSessions[wk]) || {};
+  $('gym-week-label').textContent = wk + ' · ' + Object.keys(wkData).length + '/5';
+  grid.innerHTML = GYM_TYPES.map(t => {
+    const done = wkData[t.key];
+    return `<div class="gym-cell ${done?'done':''}" onclick="toggleGymSession('${t.key}')">
+      <div class="gym-icon">${t.icon}</div>
+      <div class="gym-name">${t.name}</div>
+      ${done ? `<div class="gym-date">${fmtDate(done)}</div>` : ''}
+    </div>`;
+  }).join('');
+}
 function addMeal(){
   const d = getActiveDate('body');
   const name = $('b-meal-name').value.trim();
@@ -1225,6 +1647,72 @@ function delMeal(id){
   S.meals[d] = S.meals[d].filter(m => m.id!==id);
   save();
   renderBody();
+}
+
+// Get ISO week key like "2026-W19"
+function getWeekKey(date){
+  const d = new Date(date+'T12:00:00');
+  // Monday-start week
+  const dayNum = (d.getDay() + 6) % 7; // Mon=0
+  d.setDate(d.getDate() - dayNum + 3); // Thursday in this week
+  const year = d.getFullYear();
+  const firstThu = new Date(year, 0, 4);
+  const firstThuDayNum = (firstThu.getDay() + 6) % 7;
+  firstThu.setDate(firstThu.getDate() - firstThuDayNum + 3);
+  const week = 1 + Math.round((d - firstThu) / (7*86400000));
+  return `${year}-W${String(week).padStart(2,'0')}`;
+}
+function getWeekRange(date){
+  const d = new Date(date+'T12:00:00');
+  const dayNum = (d.getDay() + 6) % 7;
+  const monday = new Date(d);
+  monday.setDate(d.getDate() - dayNum);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  return [monday, sunday];
+}
+function ensureGymWeek(wk){
+  if(!S.gymSessions[wk]) S.gymSessions[wk] = { push:false, pull:false, legs:false, abs:false, stretching:false };
+  return S.gymSessions[wk];
+}
+function toggleGymSession(kind){
+  const wk = getWeekKey(TODAY());
+  const w = ensureGymWeek(wk);
+  w[kind] = !w[kind];
+  save();
+  renderBody();
+  renderGymWeek();
+}
+function renderGymWeek(){
+  const grid = $('gym-week-grid');
+  if(!grid) return;
+  const today = TODAY();
+  const wk = getWeekKey(today);
+  const w = ensureGymWeek(wk);
+  const [monday, sunday] = getWeekRange(today);
+
+  const sessions = [
+    { key:'push', icon:'🔼', label:'Push' },
+    { key:'pull', icon:'🔽', label:'Pull' },
+    { key:'legs', icon:'🦵', label:'Legs' },
+    { key:'abs', icon:'⬛', label:'Abs' },
+    { key:'stretching', icon:'🧘', label:'Stretch' },
+  ];
+
+  grid.innerHTML = sessions.map(s => `
+    <div class="gym-cell ${w[s.key]?'done':''}" onclick="toggleGymSession('${s.key}')">
+      <div class="gym-cell-icon">${s.icon}</div>
+      <div class="gym-cell-label">${s.label}</div>
+      <div class="gym-cell-status">${w[s.key]?'✓ Done':'tap'}</div>
+    </div>
+  `).join('');
+
+  const fmt = d => d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const lbl = $('gym-week-label');
+  if(lbl) lbl.textContent = `Week of ${fmt(monday)} – ${fmt(sunday)}`;
+  const stat = $('gym-week-status');
+  const doneCount = sessions.filter(s => w[s.key]).length;
+  if(stat) stat.textContent = `${doneCount} / 5 done`;
 }
 
 async function aiLogMeals(){
@@ -1331,6 +1819,7 @@ function renderBody(){
   }
 
   renderDateStrip('body');
+  renderGymGrid();
   renderBodyChart();
 }
 function renderBodyChart(){
@@ -1346,7 +1835,7 @@ function renderBodyChart(){
       datasets:[{
         data,
         borderColor:'#fb923c',
-        backgroundColor:'rgba(255,107,53,.1)',
+        backgroundColor:'rgba(251,146,60,.1)',
         borderWidth:2,
         tension:.3,
         spanGaps:true,
@@ -1355,7 +1844,22 @@ function renderBodyChart(){
         fill:true,
       }]
     },
-    options: chartOpts(false)
+    options: {
+      ...chartOpts(true),
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ color:getCSSVar('--text-3'), font:{family:"'JetBrains Mono', monospace", size:9}, maxTicksLimit:6 } },
+        y:{
+          min: 65, max: 85,
+          grid:{ color:getCSSVar('--border'), drawBorder:false },
+          ticks:{
+            color:getCSSVar('--text-3'),
+            font:{family:"'JetBrains Mono', monospace", size:9},
+            stepSize: 5,
+            callback: v => v + 'kg'
+          }
+        }
+      }
+    }
   });
 }
 
@@ -1431,7 +1935,7 @@ function renderSocialChart(){
   const ctx = $('social-chart');
   if(!ctx) return;
   const dates = getNDaysBack(7);
-  const data = dates.map(d => S.social[d]?.rating || null);
+  const data = dates.map(d => S.social[d]?.rating || 0);
   if(charts.social) charts.social.destroy();
   charts.social = new Chart(ctx, {
     type:'bar',
@@ -1444,7 +1948,21 @@ function renderSocialChart(){
         maxBarThickness: 32,
       }]
     },
-    options: chartOpts(true, 10)
+    options: {
+      ...chartOpts(true),
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ color:getCSSVar('--text-3'), font:{family:"'JetBrains Mono', monospace", size:9} } },
+        y:{
+          min: 0, max: 10,
+          grid:{ color:getCSSVar('--border'), drawBorder:false },
+          ticks:{
+            color:getCSSVar('--text-3'),
+            font:{family:"'JetBrains Mono', monospace", size:9},
+            stepSize: 2
+          }
+        }
+      }
+    }
   });
 }
 
@@ -1722,7 +2240,22 @@ function renderBusinessChart(){
         maxBarThickness: 24,
       }]
     },
-    options: chartOpts(true)
+    options: {
+      ...chartOpts(true),
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ color:getCSSVar('--text-3'), font:{family:"'JetBrains Mono', monospace", size:9}, maxTicksLimit:7 } },
+        y:{
+          min: 0, max: 5,
+          grid:{ color:getCSSVar('--border'), drawBorder:false },
+          ticks:{
+            color:getCSSVar('--text-3'),
+            font:{family:"'JetBrains Mono', monospace", size:9},
+            stepSize: 1,
+            callback: v => v + 'h'
+          }
+        }
+      }
+    }
   });
 }
 function renderPortfolioChart(){
@@ -1731,6 +2264,8 @@ function renderPortfolioChart(){
   const sorted = [...S.portfolio].sort((a,b) => a.ts - b.ts);
   const labels = sorted.map(p => fmtDate(p.date));
   const data = sorted.map(p => p.value);
+  // Fixed Y axis: 0 to portfolio target (so progress is visible relative to goal)
+  const yMax = Math.max(S.profile.portfolioTarget * 1.1, ...data, 1000);
   if(charts.portfolio) charts.portfolio.destroy();
   charts.portfolio = new Chart(ctx, {
     type:'line',
@@ -1747,7 +2282,21 @@ function renderPortfolioChart(){
         fill:true,
       }]
     },
-    options: chartOpts(true)
+    options: {
+      ...chartOpts(true),
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ color:getCSSVar('--text-3'), font:{family:"'JetBrains Mono', monospace", size:9}, maxTicksLimit:6 } },
+        y:{
+          min: 0, max: yMax,
+          grid:{ color:getCSSVar('--border'), drawBorder:false },
+          ticks:{
+            color:getCSSVar('--text-3'),
+            font:{family:"'JetBrains Mono', monospace", size:9},
+            callback: v => '€' + (v >= 1000 ? (v/1000).toFixed(0)+'k' : v)
+          }
+        }
+      }
+    }
   });
 }
 
@@ -1799,6 +2348,95 @@ function delCVGoal(id){
   save();
   renderCV();
 }
+function addMockExam(){
+  const score = parseInt($('mock-score-in').value);
+  if(isNaN(score) || score < 200 || score > 800){ toast('Enter score 200-800','err'); return; }
+  const date = $('mock-date-in').value || TODAY();
+  S.mockExams.push({ id: NOW(), date, score, ts: NOW() });
+  $('mock-score-in').value=''; $('mock-date-in').value='';
+  save();
+  renderCV();
+  renderOverview();
+  toast(`Mock score ${score} logged`);
+}
+function delMockExam(id){
+  S.mockExams = S.mockExams.filter(m => m.id !== id);
+  save();
+  renderCV();
+  renderOverview();
+}
+function renderMockChart(){
+  const ctx = $('mock-chart');
+  if(!ctx) return;
+  const sorted = [...S.mockExams].sort((a,b) => a.date.localeCompare(b.date));
+  const labels = sorted.map(m => fmtDate(m.date));
+  const data = sorted.map(m => m.score);
+  // Add target as horizontal line via annotation-like fake dataset
+  const targetLine = sorted.map(() => S.profile.gmatScoreTarget);
+
+  if(charts.mock) charts.mock.destroy();
+  charts.mock = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {
+          label:'Score',
+          data,
+          borderColor:'#7dd3fc',
+          backgroundColor:'rgba(125,211,252,.12)',
+          borderWidth:2,
+          tension:.2,
+          pointRadius:4,
+          pointBackgroundColor:'#7dd3fc',
+          fill:true,
+        },
+        {
+          label:'Target',
+          data: targetLine,
+          borderColor:'rgba(201,241,88,.6)',
+          borderWidth:1,
+          borderDash:[4,4],
+          pointRadius:0,
+          fill:false,
+        }
+      ]
+    },
+    options: {
+      ...chartOpts(true),
+      scales:{
+        x:{ grid:{display:false}, ticks:{color:getCSSVar('--text-3'),font:{family:"'JetBrains Mono', monospace",size:9},maxTicksLimit:6} },
+        y:{
+          min: 200, max: 800,
+          grid:{color:getCSSVar('--border')},
+          ticks:{
+            color:getCSSVar('--text-3'),
+            font:{family:"'JetBrains Mono', monospace",size:9},
+            stepSize: 100
+          }
+        }
+      }
+    }
+  });
+}
+function renderMockList(){
+  const el = $('mock-list');
+  if(!el) return;
+  const sorted = [...S.mockExams].sort((a,b) => b.date.localeCompare(a.date));
+  if(sorted.length === 0){
+    el.innerHTML = '<div class="empty">No mock exams logged</div>';
+    return;
+  }
+  el.innerHTML = sorted.slice(0, 5).map(m => `
+    <div class="li-item">
+      <div class="li-main">
+        <div class="li-title">${m.score}</div>
+        <div class="li-sub">${fmtDate(m.date)}</div>
+      </div>
+      <button class="bdel" onclick="delMockExam(${m.id})">×</button>
+    </div>
+  `).join('');
+}
 function renderCV(){
   if(activeTab !== 'cv') return;
   const d = getActiveDate('cv');
@@ -1836,6 +2474,8 @@ function renderCV(){
 
   renderDateStrip('cv');
   renderCVChart();
+  renderMockChart();
+  renderMockList();
 }
 function showGoalDesc(id){
   const g = S.cvGoals.find(x => x.id === id);
@@ -1852,28 +2492,34 @@ function renderCVChart(){
   const ctx = $('cv-chart');
   if(!ctx) return;
   const dates = getNDaysBack(30);
-  const data = dates.map(d => {
-    const day = S.cv[d];
-    return day && day.problems > 0 ? Math.round((day.correct/day.problems)*100) : null;
-  });
+  const data = dates.map(d => S.cv[d]?.problems || 0);
   if(charts.cv) charts.cv.destroy();
   charts.cv = new Chart(ctx, {
-    type:'line',
+    type:'bar',
     data:{
       labels: dates.map(d => fmtDate(d)),
       datasets:[{
         data,
-        borderColor:'#7dd3fc',
-        backgroundColor:'rgba(96,165,250,.1)',
-        borderWidth:2,
-        tension:.3,
-        spanGaps:true,
-        pointRadius:3,
-        pointBackgroundColor:'#7dd3fc',
-        fill:true,
+        backgroundColor: data.map(v => v >= S.profile.gmatDailyTarget ? '#7dd3fc' : 'rgba(125,211,252,.4)'),
+        borderRadius:3,
+        maxBarThickness: 14,
       }]
     },
-    options: chartOpts(true, 100)
+    options: {
+      ...chartOpts(true),
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ color:getCSSVar('--text-3'), font:{family:"'JetBrains Mono', monospace", size:9}, maxTicksLimit:6 } },
+        y:{
+          min: 0, max: 100,
+          grid:{ color:getCSSVar('--border'), drawBorder:false },
+          ticks:{
+            color:getCSSVar('--text-3'),
+            font:{family:"'JetBrains Mono', monospace", size:9},
+            stepSize: 25
+          }
+        }
+      }
+    }
   });
 }
 
@@ -2156,9 +2802,6 @@ function renderEventGroups(events){
   }).join('');
 }
 
-// ═══════════════════════════════════════════════════════════
-// HOME / OVERVIEW
-// ═══════════════════════════════════════════════════════════
 function getStreak(pillar, hasFn){
   let streak = 0;
   const today = new Date();
@@ -2171,8 +2814,751 @@ function getStreak(pillar, hasFn){
   }
   return streak;
 }
+
+function paceStatus(donePct, expectedPct){
+  if(donePct >= 100) return ['complete', '✓ Hit'];
+  if(donePct >= expectedPct + 5) return ['ahead', 'AHEAD'];
+  if(donePct >= expectedPct - 5) return ['ontrack', 'ON TRACK'];
+  if(donePct >= expectedPct - 15) return ['behind', 'BEHIND'];
+  return ['danger', 'OFF PACE'];
+}
+
+function circleSvg(pctDone, pillarClass, currentLabel, subLabel){
+  const r = 46;
+  const c = 2 * Math.PI * r;
+  const offset = c * (1 - Math.min(1, pctDone/100));
+  return `
+    <div class="circ-wrap">
+      <svg class="circ-svg" viewBox="0 0 110 110">
+        <circle class="circ-bg" cx="55" cy="55" r="${r}"/>
+        <circle class="circ-fill ${pillarClass}" cx="55" cy="55" r="${r}"
+                stroke-dasharray="${c}" stroke-dashoffset="${offset}"/>
+      </svg>
+      <div class="circ-text">
+        <div class="circ-pct">${currentLabel}</div>
+        <div class="circ-sub">${subLabel}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderNorthStars(){
+  const el = $('north-stars');
+  if(!el) return;
+  const today = TODAY();
+  const cards = [];
+
+  // ─── BODY: BULK ────────────────────────────────────────────
+  const sortedBody = Object.keys(S.body)
+    .filter(d => S.body[d].weight != null)
+    .sort()
+    .map(d => ({ date: d, weight: S.body[d].weight }));
+  const latestWeight = sortedBody.length ? sortedBody[sortedBody.length-1].weight : S.profile.weight;
+
+  // Bulk: from starting weight to bulk target by bulk date
+  const bulkStart = S.profile.weight;
+  const bulkTarget = S.profile.bulkTargetWeight;
+  const bulkDate = S.profile.bulkTargetDate;
+  const bulkDaysLeft = Math.max(0, Math.ceil((new Date(bulkDate)-new Date(today))/86400000));
+  const bulkTotal = Math.abs(bulkTarget - bulkStart);
+  const bulkDone = today >= bulkDate ? bulkTotal : Math.max(0, latestWeight - bulkStart);
+  const bulkPct = bulkTotal > 0 ? Math.min(100, (bulkDone/bulkTotal)*100) : (today >= bulkDate ? 100 : 0);
+  const bulkExpected = today >= bulkDate ? 100 : 50; // simplified
+  const [bulkClass, bulkText] = paceStatus(bulkPct, bulkExpected);
+
+  cards.push(`
+    <div class="ns-card body">
+      <div class="ns-label">Bulk → ${bulkTarget}kg</div>
+      ${circleSvg(bulkPct, 'body', latestWeight.toFixed(1)+'kg', `${Math.round(bulkPct)}%`)}
+      <div class="ns-deadline">${bulkDaysLeft}d · ${fmtDate(bulkDate)}</div>
+      <div class="ns-status ${bulkClass}">${bulkText}</div>
+    </div>
+  `);
+
+  // ─── BODY: CUT ─────────────────────────────────────────────
+  const cutTarget = S.profile.cutTargetWeight;
+  const cutDate = S.profile.cutTargetDate;
+  const cutDaysLeft = Math.max(0, Math.ceil((new Date(cutDate)-new Date(today))/86400000));
+  // Cut starts from bulk weight (peak), goes down to cut target
+  const cutStart = bulkTarget;
+  const cutTotal = Math.abs(cutStart - cutTarget);
+  let cutDone = 0;
+  if(today >= bulkDate){
+    cutDone = Math.max(0, cutStart - latestWeight);
+  }
+  const cutPct = cutTotal > 0 ? Math.min(100, (cutDone/cutTotal)*100) : 0;
+  // Pace: only counts after bulk date
+  let cutExpected = 0;
+  if(today >= bulkDate){
+    const cutTotalDays = Math.max(1, Math.ceil((new Date(cutDate)-new Date(bulkDate))/86400000));
+    const cutDaysElapsed = Math.max(0, Math.ceil((new Date(today)-new Date(bulkDate))/86400000));
+    cutExpected = Math.min(100, (cutDaysElapsed/cutTotalDays)*100);
+  }
+  const [cutClass, cutText] = paceStatus(cutPct, cutExpected);
+
+  cards.push(`
+    <div class="ns-card body">
+      <div class="ns-label">Cut → ${cutTarget}kg</div>
+      ${circleSvg(cutPct, 'body', latestWeight.toFixed(1)+'kg', `${Math.round(cutPct)}%`)}
+      <div class="ns-deadline">${cutDaysLeft}d · ${fmtDate(cutDate)}</div>
+      <div class="ns-status ${cutClass}">${cutText}</div>
+    </div>
+  `);
+
+  // ─── MONEY: PORTFOLIO ──────────────────────────────────────
+  const sortedP = [...S.portfolio].sort((a,b) => a.ts - b.ts);
+  const latestP = sortedP[sortedP.length-1];
+  const firstP = sortedP[0];
+  const currentVal = latestP ? latestP.value : 0;
+  const startVal = firstP ? firstP.value : 0;
+  const moneyTarget = S.profile.portfolioTarget;
+  const moneyTargetDate = S.profile.portfolioTargetDate;
+  const moneyDaysLeft = Math.max(0, Math.ceil((new Date(moneyTargetDate)-new Date(today))/86400000));
+  const moneyTotal = Math.max(0, moneyTarget - startVal);
+  const moneyDone = Math.max(0, currentVal - startVal);
+  const moneyPct = moneyTotal > 0 ? Math.min(100, (moneyDone/moneyTotal)*100) : 0;
+  let moneyExpected = 0;
+  if(firstP){
+    const totDays = Math.max(1, Math.ceil((new Date(moneyTargetDate)-new Date(firstP.date))/86400000));
+    const elapsed = Math.max(0, Math.ceil((new Date(today)-new Date(firstP.date))/86400000));
+    moneyExpected = Math.min(100, (elapsed/totDays)*100);
+  }
+  const [moneyClass, moneyText] = paceStatus(moneyPct, moneyExpected);
+
+  cards.push(`
+    <div class="ns-card money">
+      <div class="ns-label">Portfolio → €${(moneyTarget/1000).toFixed(0)}k</div>
+      <div class="ns-current">€${currentVal.toLocaleString('en-US',{maximumFractionDigits:0})}</div>
+      <div class="ns-target">/ €${moneyTarget.toLocaleString('en-US',{maximumFractionDigits:0})}</div>
+      <div class="ns-linear" style="margin-top:auto">
+        <div class="ns-linear-bar">
+          <div class="ns-linear-fill money" style="width:${moneyPct}%"></div>
+          <div class="ns-linear-pace" style="left:${moneyExpected}%"></div>
+        </div>
+        <div class="ns-linear-row">
+          <span>${Math.round(moneyPct)}%</span>
+          <span>${moneyDaysLeft}d</span>
+        </div>
+      </div>
+      <div class="ns-status ${moneyClass}">${moneyText}</div>
+    </div>
+  `);
+
+  // ─── BUSINESS: CUMULATIVE HOURS ────────────────────────────
+  const bizCumTarget = S.profile.bizCumulativeTarget;
+  const bizCumDate = S.profile.bizCumulativeDate;
+  const bizCumDaysLeft = Math.max(0, Math.ceil((new Date(bizCumDate)-new Date(today))/86400000));
+  // Sum all biz hours
+  const bizTotalDone = Object.values(S.money).reduce((s,d) => s + (d.hours || 0), 0);
+  const bizCumPct = bizCumTarget > 0 ? Math.min(100, (bizTotalDone/bizCumTarget)*100) : 0;
+  // Pace from today minus days since first business log, simplified to from "now" minus days_left
+  const bizCumTotalDays = Math.max(1, bizCumDaysLeft + 1); // approximate
+  let bizCumExpected = 0; // hard to estimate without start date - use today as start = 0
+  // Since the goal was set today (May 7 → Aug 1 = 86 days), expected at start = 0%
+  const bizCumStartDate = '2026-05-07'; // approximate start
+  const bizCumElapsed = Math.max(0, Math.ceil((new Date(today)-new Date(bizCumStartDate))/86400000));
+  const bizCumTotal = Math.max(1, Math.ceil((new Date(bizCumDate)-new Date(bizCumStartDate))/86400000));
+  bizCumExpected = Math.min(100, (bizCumElapsed/bizCumTotal)*100);
+  const [bizCumClass, bizCumText] = paceStatus(bizCumPct, bizCumExpected);
+
+  cards.push(`
+    <div class="ns-card business">
+      <div class="ns-label">Biz Hours → ${bizCumTarget}h</div>
+      <div class="ns-current">${bizTotalDone.toFixed(0)}h</div>
+      <div class="ns-target">/ ${bizCumTarget}h total</div>
+      <div class="ns-linear" style="margin-top:auto">
+        <div class="ns-linear-bar">
+          <div class="ns-linear-fill business" style="width:${bizCumPct}%"></div>
+          <div class="ns-linear-pace" style="left:${bizCumExpected}%"></div>
+        </div>
+        <div class="ns-linear-row">
+          <span>${Math.round(bizCumPct)}%</span>
+          <span>${bizCumDaysLeft}d</span>
+        </div>
+      </div>
+      <div class="ns-status ${bizCumClass}">${bizCumText}</div>
+    </div>
+  `);
+
+  // ─── GMAT: CUMULATIVE PROBLEMS ─────────────────────────────
+  const gmatCumTarget = S.profile.gmatCumulativeTarget;
+  const gmatCumDate = S.profile.gmatCumulativeDate;
+  const gmatCumDaysLeft = Math.max(0, Math.ceil((new Date(gmatCumDate)-new Date(today))/86400000));
+  const gmatTotalDone = Object.values(S.cv).reduce((s,d) => s + (d.problems || 0), 0);
+  const gmatCumPct = gmatCumTarget > 0 ? Math.min(100, (gmatTotalDone/gmatCumTarget)*100) : 0;
+  const gmatCumStartDate = '2026-05-07';
+  const gmatCumElapsed = Math.max(0, Math.ceil((new Date(today)-new Date(gmatCumStartDate))/86400000));
+  const gmatCumTotalD = Math.max(1, Math.ceil((new Date(gmatCumDate)-new Date(gmatCumStartDate))/86400000));
+  const gmatCumExpected = Math.min(100, (gmatCumElapsed/gmatCumTotalD)*100);
+  const [gmatCumClass, gmatCumText] = paceStatus(gmatCumPct, gmatCumExpected);
+
+  cards.push(`
+    <div class="ns-card cv">
+      <div class="ns-label">GMAT Problems → ${gmatCumTarget}</div>
+      <div class="ns-current">${gmatTotalDone}</div>
+      <div class="ns-target">/ ${gmatCumTarget}</div>
+      <div class="ns-linear" style="margin-top:auto">
+        <div class="ns-linear-bar">
+          <div class="ns-linear-fill cv" style="width:${gmatCumPct}%"></div>
+          <div class="ns-linear-pace" style="left:${gmatCumExpected}%"></div>
+        </div>
+        <div class="ns-linear-row">
+          <span>${Math.round(gmatCumPct)}%</span>
+          <span>${gmatCumDaysLeft}d</span>
+        </div>
+      </div>
+      <div class="ns-status ${gmatCumClass}">${gmatCumText}</div>
+    </div>
+  `);
+
+  // ─── GMAT: MOCK SCORE ──────────────────────────────────────
+  const gmatScoreTarget = S.profile.gmatScoreTarget;
+  const gmatScoreDate = S.profile.gmatScoreTargetDate;
+  const sortedMocks = [...S.mockExams].sort((a,b) => a.date.localeCompare(b.date));
+  const latestMock = sortedMocks[sortedMocks.length-1];
+  const firstMock = sortedMocks[0];
+  const currentScore = latestMock ? latestMock.score : 0;
+  const startScore = firstMock ? firstMock.score : 0;
+  const scoreTotal = Math.max(1, gmatScoreTarget - startScore);
+  const scoreDone = Math.max(0, currentScore - startScore);
+  const scorePct = scoreTotal > 0 ? Math.min(100, (scoreDone/scoreTotal)*100) : 0;
+  const scoreDaysLeft = Math.max(0, Math.ceil((new Date(gmatScoreDate)-new Date(today))/86400000));
+  let scoreExpected = 0;
+  if(firstMock){
+    const totD = Math.max(1, Math.ceil((new Date(gmatScoreDate)-new Date(firstMock.date))/86400000));
+    const elapsed = Math.max(0, Math.ceil((new Date(today)-new Date(firstMock.date))/86400000));
+    scoreExpected = Math.min(100, (elapsed/totD)*100);
+  }
+  const [scoreClass, scoreText] = paceStatus(scorePct, scoreExpected);
+
+  cards.push(`
+    <div class="ns-card cv">
+      <div class="ns-label">Mock Score → ${gmatScoreTarget}</div>
+      ${circleSvg(scorePct, 'cv', currentScore || '—', currentScore ? `+${currentScore-startScore}` : 'no log')}
+      <div class="ns-deadline">${scoreDaysLeft}d · ${fmtDate(gmatScoreDate)}</div>
+      <div class="ns-status ${scoreClass}">${scoreText}</div>
+    </div>
+  `);
+
+  // ─── SOCIAL: 3 MINI CARDS ─────────────────────────────────
+  const socialDate = S.profile.socialCumulativeDate;
+  const socialDaysLeft = Math.max(0, Math.ceil((new Date(socialDate)-new Date(today))/86400000));
+  const totalApp = Object.values(S.social).reduce((s,d) => s + (d.approaches || 0), 0);
+  const totalCmp = Object.values(S.social).reduce((s,d) => s + (d.compliments || 0), 0);
+  const totalCnn = Object.values(S.social).reduce((s,d) => s + (d.connections || 0), 0);
+  const taApp = S.profile.socialApproachTarget;
+  const taCmp = S.profile.socialComplimentTarget;
+  const taCnn = S.profile.socialConnectionTarget;
+
+  const appPct = taApp > 0 ? Math.min(100, (totalApp/taApp)*100) : 0;
+  const cmpPct = taCmp > 0 ? Math.min(100, (totalCmp/taCmp)*100) : 0;
+  const cnnPct = taCnn > 0 ? Math.min(100, (totalCnn/taCnn)*100) : 0;
+
+  cards.push(`
+    <div class="ns-card social-app">
+      <div class="ns-label">Approaches → ${taApp}</div>
+      ${circleSvg(appPct, 'social', totalApp, `/ ${taApp}`)}
+      <div class="ns-deadline">${socialDaysLeft}d</div>
+      <div class="ns-status ${appPct>=100?'complete':appPct>=50?'ontrack':'behind'}">${Math.round(appPct)}%</div>
+    </div>
+    <div class="ns-card social-cmp">
+      <div class="ns-label">Compliments → ${taCmp}</div>
+      ${circleSvg(cmpPct, 'social', totalCmp, `/ ${taCmp}`)}
+      <div class="ns-deadline">${socialDaysLeft}d</div>
+      <div class="ns-status ${cmpPct>=100?'complete':cmpPct>=50?'ontrack':'behind'}">${Math.round(cmpPct)}%</div>
+    </div>
+    <div class="ns-card social-cnn">
+      <div class="ns-label">Connections → ${taCnn}</div>
+      ${circleSvg(cnnPct, 'social', totalCnn, `/ ${taCnn}`)}
+      <div class="ns-deadline">${socialDaysLeft}d</div>
+      <div class="ns-status ${cnnPct>=100?'complete':cnnPct>=50?'ontrack':'behind'}">${Math.round(cnnPct)}%</div>
+    </div>
+  `);
+
+  el.innerHTML = `<div class="ns-grid">${cards.join('')}</div>`;
+}
+
+function renderDailyTargets(){
+  const el = $('daily-targets');
+  if(!el) return;
+  const today = TODAY();
+  const rows = [];
+
+  // ─── BODY DAILY: calories + protein ────────────────────────
+  const todayMeals = S.meals[today] || [];
+  const todayCal = todayMeals.reduce((s,m) => s+(m.cal||0), 0);
+  const todayProt = todayMeals.reduce((s,m) => s+(m.prot||0), 0);
+  const calPct = Math.min(100, (todayCal/S.profile.calTarget)*100);
+  const protPct = Math.min(100, (todayProt/S.profile.protTarget)*100);
+  const bodyDone = todayCal >= S.profile.calTarget && todayProt >= S.profile.protTarget;
+  rows.push(`
+    <div class="dt-row body">
+      <div class="dt-head">
+        <div class="dt-title">Body · Nutrition</div>
+        <div class="dt-status ${bodyDone?'complete':todayCal>0?'partial':''}">${bodyDone?'✓ Hit':todayCal>0?'In progress':'Not started'}</div>
+      </div>
+      <div class="dt-bars">
+        <div class="dt-bar-row">
+          <span class="dt-bar-label">Calories</span>
+          <div class="dt-bar-bar"><div class="dt-bar-fill body" style="width:${calPct}%"></div></div>
+          <span class="dt-bar-num">${todayCal} / ${S.profile.calTarget}</span>
+        </div>
+        <div class="dt-bar-row">
+          <span class="dt-bar-label">Protein</span>
+          <div class="dt-bar-bar"><div class="dt-bar-fill body" style="width:${protPct}%"></div></div>
+          <span class="dt-bar-num">${todayProt} / ${S.profile.protTarget}g</span>
+        </div>
+      </div>
+    </div>
+  `);
+
+  // ─── MONEY DAILY: required gain per day ────────────────────
+  const sortedP = [...S.portfolio].sort((a,b) => a.ts - b.ts);
+  const latestP = sortedP[sortedP.length-1];
+  const currentVal = latestP ? latestP.value : 0;
+  const moneyTarget = S.profile.portfolioTarget;
+  const moneyTargetDate = S.profile.portfolioTargetDate;
+  const moneyDaysLeft = Math.max(1, Math.ceil((new Date(moneyTargetDate)-new Date(today))/86400000));
+  const remaining = Math.max(0, moneyTarget - currentVal);
+  const dailyNeeded = remaining / moneyDaysLeft;
+  // Daily actual: change from yesterday to today (find latest 2 entries)
+  let dailyActual = 0;
+  if(sortedP.length >= 2){
+    const last = sortedP[sortedP.length-1];
+    const prev = sortedP[sortedP.length-2];
+    const daysBetween = Math.max(1, Math.ceil((new Date(last.date)-new Date(prev.date))/86400000));
+    dailyActual = (last.value - prev.value) / daysBetween;
+  }
+  const dailyPct = dailyNeeded > 0 ? Math.min(100, Math.max(0, (dailyActual/dailyNeeded)*100)) : 100;
+  rows.push(`
+    <div class="dt-row money">
+      <div class="dt-head">
+        <div class="dt-title">Money · Daily €/day to hit goal</div>
+        <div class="dt-status ${dailyActual >= dailyNeeded ? 'complete':''}">€${dailyNeeded.toFixed(0)}/day needed</div>
+      </div>
+      <div class="dt-bars">
+        <div class="dt-bar-row">
+          <span class="dt-bar-label">Today's pace</span>
+          <div class="dt-bar-bar"><div class="dt-bar-fill money" style="width:${dailyPct}%"></div></div>
+          <span class="dt-bar-num">${dailyActual >= 0 ? '+' : ''}€${dailyActual.toFixed(0)}/d</span>
+        </div>
+      </div>
+    </div>
+  `);
+
+  // ─── BUSINESS DAILY: 2h ────────────────────────────────────
+  const todayBiz = (S.money[today]?.hours || 0);
+  const bizTgt = S.profile.bizTarget;
+  const bizPct = Math.min(100, (todayBiz/bizTgt)*100);
+  const bizDone = todayBiz >= bizTgt;
+  rows.push(`
+    <div class="dt-row business">
+      <div class="dt-head">
+        <div class="dt-title">Business · Daily Hours</div>
+        <div class="dt-status ${bizDone?'complete':todayBiz>0?'partial':''}">${bizDone?'✓ Hit':todayBiz>0?(bizTgt-todayBiz).toFixed(1)+'h left':'Not started'}</div>
+      </div>
+      <div class="dt-bars">
+        <div class="dt-bar-row">
+          <span class="dt-bar-label">Hours</span>
+          <div class="dt-bar-bar"><div class="dt-bar-fill business" style="width:${bizPct}%"></div></div>
+          <span class="dt-bar-num">${todayBiz.toFixed(1)} / ${bizTgt}h</span>
+        </div>
+      </div>
+    </div>
+  `);
+
+  // ─── GMAT DAILY: 50 problems ───────────────────────────────
+  const todayGmat = (S.cv[today]?.problems || 0);
+  const gmatTgt = S.profile.gmatDailyTarget;
+  const gmatPct = Math.min(100, (todayGmat/gmatTgt)*100);
+  const gmatDone = todayGmat >= gmatTgt;
+  rows.push(`
+    <div class="dt-row cv">
+      <div class="dt-head">
+        <div class="dt-title">GMAT · Daily Problems</div>
+        <div class="dt-status ${gmatDone?'complete':todayGmat>0?'partial':''}">${gmatDone?'✓ Hit':todayGmat>0?(gmatTgt-todayGmat)+' left':'Not started'}</div>
+      </div>
+      <div class="dt-bars">
+        <div class="dt-bar-row">
+          <span class="dt-bar-label">Problems</span>
+          <div class="dt-bar-bar"><div class="dt-bar-fill cv" style="width:${gmatPct}%"></div></div>
+          <span class="dt-bar-num">${todayGmat} / ${gmatTgt}</span>
+        </div>
+      </div>
+    </div>
+  `);
+
+  // ─── SOCIAL DAILY: 1/1/1 ───────────────────────────────────
+  const todaySocial = S.social[today] || {};
+  const sa = todaySocial.approaches || 0;
+  const sc = todaySocial.compliments || 0;
+  const sn = todaySocial.connections || 0;
+  const taApp = S.profile.socialDailyApproaches;
+  const taCmp = S.profile.socialDailyCompliments;
+  const taCnn = S.profile.socialDailyConnections;
+  const allDone = sa >= taApp && sc >= taCmp && sn >= taCnn;
+  rows.push(`
+    <div class="dt-row social">
+      <div class="dt-head">
+        <div class="dt-title">Social · Daily Minimums</div>
+        <div class="dt-status ${allDone?'complete':(sa+sc+sn)>0?'partial':''}">${allDone?'✓ All hit':(sa+sc+sn)>0?'In progress':'Not started'}</div>
+      </div>
+      <div class="daily-grid">
+        <div class="daily-cell ${sa>=taApp?'done':''}">
+          <div class="daily-cell-v">${sa}/${taApp}</div>
+          <div class="daily-cell-l">Approach</div>
+        </div>
+        <div class="daily-cell ${sc>=taCmp?'done':''}">
+          <div class="daily-cell-v">${sc}/${taCmp}</div>
+          <div class="daily-cell-l">Compliment</div>
+        </div>
+        <div class="daily-cell ${sn>=taCnn?'done':''}">
+          <div class="daily-cell-v">${sn}/${taCnn}</div>
+          <div class="daily-cell-l">Connection</div>
+        </div>
+      </div>
+    </div>
+  `);
+
+  el.innerHTML = `<div class="dt-grid">${rows.join('')}</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// NORTH STARS - Top of home
+// ═══════════════════════════════════════════════════════════
+function renderNorthStars(){
+  const el = $('north-stars');
+  if(!el) return;
+  const today = TODAY();
+  const cards = [];
+
+  // ─── Body Bulk: 75kg by May 17 (only shown BEFORE bulk date)
+  const sortedBody = Object.keys(S.body)
+    .filter(d => S.body[d].weight != null)
+    .sort()
+    .map(d => ({ date: d, weight: S.body[d].weight }));
+  const latestWeight = sortedBody.length ? sortedBody[sortedBody.length-1].weight : S.profile.weight;
+
+  const bulkDate = S.profile.bulkTargetDate || '2026-05-17';
+  const bulkTgt = S.profile.bulkTargetWeight || 75;
+  const cutDate = S.profile.cutTargetDate || '2026-08-01';
+  const cutTgt = S.profile.cutTargetWeight || 70;
+
+  // Only show ONE body goal at a time depending on phase
+  if(today < bulkDate){
+    // BULK PHASE — show only Bulk
+    const bulkStart = S.profile.weight || 74;
+    const bulkRange = Math.max(0.1, bulkTgt - bulkStart);
+    const bulkDone = Math.max(0, latestWeight - bulkStart);
+    const bulkPct = Math.min(100, (bulkDone / bulkRange) * 100);
+    const bulkDaysLeft = Math.max(0, Math.ceil((new Date(bulkDate)-new Date(today))/86400000));
+    const bulkExpectedPct = (() => {
+      const total = Math.max(1, Math.ceil((new Date(bulkDate)-new Date(S.body && Object.keys(S.body)[0] || today))/86400000));
+      const elapsed = Math.max(0, total - bulkDaysLeft);
+      return Math.min(100, (elapsed / total) * 100);
+    })();
+    const bulkStatus = bulkPct >= 100 ? 'complete' : bulkPct >= bulkExpectedPct + 5 ? 'ahead' : bulkPct >= bulkExpectedPct - 10 ? 'ontrack' : bulkPct >= bulkExpectedPct - 25 ? 'behind' : 'danger';
+    const bulkStatusTxt = bulkPct >= 100 ? '✓ HIT' : bulkStatus === 'ahead' ? 'AHEAD' : bulkStatus === 'ontrack' ? 'ON TRACK' : bulkStatus === 'behind' ? 'BEHIND' : 'OFF PACE';
+
+    cards.push(circleCard('body', 'Bulk → ' + bulkTgt + 'kg', bulkPct, latestWeight.toFixed(1) + 'kg', bulkDaysLeft + 'd · ' + fmtDate(bulkDate), bulkStatusTxt, bulkStatus));
+  } else {
+    // CUT PHASE — show only Cut
+    const cutStart = bulkTgt;
+    const cutRange = Math.max(0.1, cutStart - cutTgt);
+    const cutDone = Math.max(0, cutStart - latestWeight);
+    const cutPct = Math.min(100, (cutDone / cutRange) * 100);
+    const cutDaysLeft = Math.max(0, Math.ceil((new Date(cutDate)-new Date(today))/86400000));
+    const cutTotal = Math.max(1, Math.ceil((new Date(cutDate)-new Date(bulkDate))/86400000));
+    const cutElapsed = Math.max(0, cutTotal - cutDaysLeft);
+    const cutExpectedPct = Math.min(100, (cutElapsed / cutTotal) * 100);
+    const cutStatus = cutPct >= 100 ? 'complete' : cutPct >= cutExpectedPct + 5 ? 'ahead' : cutPct >= cutExpectedPct - 10 ? 'ontrack' : cutPct >= cutExpectedPct - 25 ? 'behind' : 'danger';
+    const cutStatusTxt = cutPct >= 100 ? '✓ HIT' : cutStatus === 'ahead' ? 'AHEAD' : cutStatus === 'ontrack' ? 'ON TRACK' : cutStatus === 'behind' ? 'BEHIND' : 'OFF PACE';
+
+    cards.push(circleCard('body', 'Cut → ' + cutTgt + 'kg', cutPct, latestWeight.toFixed(1) + 'kg', cutDaysLeft + 'd · ' + fmtDate(cutDate), cutStatusTxt, cutStatus));
+  }
+
+  // ─── Money: €10k by Aug 1 (linear, big number)
+  const sortedP = [...S.portfolio].sort((a,b) => a.ts - b.ts);
+  const latestP = sortedP[sortedP.length-1];
+  const currentVal = latestP ? latestP.value : 0;
+  const moneyTgt = S.profile.portfolioTarget || 10000;
+  const moneyDate = S.profile.portfolioTargetDate || '2026-08-01';
+  const moneyStart = sortedP[0]?.value || 5150;
+  const moneyRange = Math.max(1, moneyTgt - moneyStart);
+  const moneyDone = Math.max(0, currentVal - moneyStart);
+  const moneyPct = Math.min(100, (moneyDone / moneyRange) * 100);
+  const moneyDaysLeft = Math.max(0, Math.ceil((new Date(moneyDate)-new Date(today))/86400000));
+  const moneyExpectedPct = (() => {
+    if(!sortedP[0]) return 0;
+    const total = Math.max(1, Math.ceil((new Date(moneyDate)-new Date(sortedP[0].date))/86400000));
+    const elapsed = Math.max(0, total - moneyDaysLeft);
+    return Math.min(100, (elapsed / total) * 100);
+  })();
+  const moneyStatus = moneyPct >= 100 ? 'complete' : moneyPct >= moneyExpectedPct + 5 ? 'ahead' : moneyPct >= moneyExpectedPct - 10 ? 'ontrack' : moneyPct >= moneyExpectedPct - 25 ? 'behind' : 'danger';
+  const moneyStatusTxt = moneyPct >= 100 ? '✓ HIT' : moneyStatus === 'ahead' ? 'AHEAD' : moneyStatus === 'ontrack' ? 'ON TRACK' : moneyStatus === 'behind' ? 'BEHIND' : 'OFF PACE';
+
+  cards.push(linearCard('money', '€' + moneyTgt.toLocaleString('en-US') + ' Portfolio', '€' + currentVal.toLocaleString('en-US',{maximumFractionDigits:0}), 'of €' + moneyTgt.toLocaleString('en-US') + ' · ' + moneyDaysLeft + 'd', moneyPct, moneyExpectedPct, moneyStatusTxt, moneyStatus));
+
+  // ─── Business: 172 hours by Aug 1 (linear)
+  const bizDate = S.profile.portfolioTargetDate || '2026-08-01'; // same date as money
+  const bizCumStart = today; // measure from today forward
+  const bizTotalHours = Object.values(S.money).reduce((s, d) => s + (d.hours || 0), 0);
+  const bizTgt = 172;
+  const bizPct = Math.min(100, (bizTotalHours / bizTgt) * 100);
+  const bizDaysLeft = Math.max(0, Math.ceil((new Date(bizDate)-new Date(today))/86400000));
+  // Pace: 86 days × 2h = 172. So daily expectation is bizTgt / 86. Days passed since starting tracking:
+  const bizFirstDate = Object.keys(S.money).sort()[0];
+  const bizExpectedPct = (() => {
+    if(!bizFirstDate) return 0;
+    const total = Math.max(1, Math.ceil((new Date(bizDate)-new Date(bizFirstDate))/86400000));
+    const elapsed = Math.max(0, total - bizDaysLeft);
+    return Math.min(100, (elapsed / total) * 100);
+  })();
+  const bizStatus = bizPct >= 100 ? 'complete' : bizPct >= bizExpectedPct + 5 ? 'ahead' : bizPct >= bizExpectedPct - 10 ? 'ontrack' : bizPct >= bizExpectedPct - 25 ? 'behind' : 'danger';
+  const bizStatusTxt = bizPct >= 100 ? '✓ HIT' : bizStatus === 'ahead' ? 'AHEAD' : bizStatus === 'ontrack' ? 'ON TRACK' : bizStatus === 'behind' ? 'BEHIND' : 'OFF PACE';
+
+  cards.push(linearCard('business', '172h Business', bizTotalHours.toFixed(1) + 'h', 'of 172h · ' + bizDaysLeft + 'd', bizPct, bizExpectedPct, bizStatusTxt, bizStatus));
+
+  // ─── GMAT: 4300 problems by Aug 1 (linear)
+  const cvDate = S.profile.portfolioTargetDate || '2026-08-01';
+  const cvTotalProblems = Object.values(S.cv).reduce((s, d) => s + (d.problems || 0), 0);
+  const cvTgt = 4300;
+  const cvPct = Math.min(100, (cvTotalProblems / cvTgt) * 100);
+  const cvDaysLeft = Math.max(0, Math.ceil((new Date(cvDate)-new Date(today))/86400000));
+  const cvFirstDate = Object.keys(S.cv).sort()[0];
+  const cvExpectedPct = (() => {
+    if(!cvFirstDate) return 0;
+    const total = Math.max(1, Math.ceil((new Date(cvDate)-new Date(cvFirstDate))/86400000));
+    const elapsed = Math.max(0, total - cvDaysLeft);
+    return Math.min(100, (elapsed / total) * 100);
+  })();
+  const cvStatus = cvPct >= 100 ? 'complete' : cvPct >= cvExpectedPct + 5 ? 'ahead' : cvPct >= cvExpectedPct - 10 ? 'ontrack' : cvPct >= cvExpectedPct - 25 ? 'behind' : 'danger';
+  const cvStatusTxt = cvPct >= 100 ? '✓ HIT' : cvStatus === 'ahead' ? 'AHEAD' : cvStatus === 'ontrack' ? 'ON TRACK' : cvStatus === 'behind' ? 'BEHIND' : 'OFF PACE';
+
+  cards.push(linearCard('cv', '4300 GMAT Problems', cvTotalProblems.toLocaleString('en-US'), 'of 4,300 · ' + cvDaysLeft + 'd', cvPct, cvExpectedPct, cvStatusTxt, cvStatus));
+
+  // ─── GMAT Mock Score: 555 → 700 by Jan 30 (circular)
+  const sortedExams = [...(S.mockExams || [])].sort((a,b) => a.date.localeCompare(b.date));
+  const latestExam = sortedExams[sortedExams.length-1];
+  const examScore = latestExam ? latestExam.score : 555;
+  const examTgt = 700;
+  const examStart = sortedExams[0]?.score || 555;
+  const examRange = Math.max(1, examTgt - examStart);
+  const examDone = Math.max(0, examScore - examStart);
+  const examPct = Math.min(100, (examDone / examRange) * 100);
+  const examDate = '2027-01-30';
+  const examDaysLeft = Math.max(0, Math.ceil((new Date(examDate)-new Date(today))/86400000));
+  const examStatus = examPct >= 100 ? 'complete' : 'ontrack';
+  const examStatusTxt = examPct >= 100 ? '✓ HIT' : 'IN PROGRESS';
+
+  cards.push(circleCard('cv', 'Mock Score → ' + examTgt, examPct, examScore + '', examDaysLeft + 'd · ' + fmtDate(examDate), examStatusTxt, examStatus));
+
+  // ─── Social: 86 each by Aug 1 (linear)
+  const totApproaches = Object.values(S.social).reduce((s, d) => s + (d.approaches || 0), 0);
+  const totCompliments = Object.values(S.social).reduce((s, d) => s + (d.compliments || 0), 0);
+  const totConnections = Object.values(S.social).reduce((s, d) => s + (d.connections || 0), 0);
+  const socialMin = Math.min(totApproaches, totCompliments, totConnections);
+  const socialTgt = 86;
+  const socialPct = Math.min(100, (socialMin / socialTgt) * 100);
+  const socialDate = S.profile.portfolioTargetDate || '2026-08-01';
+  const socialDaysLeft = Math.max(0, Math.ceil((new Date(socialDate)-new Date(today))/86400000));
+  const socialFirstDate = Object.keys(S.social).sort()[0];
+  const socialExpectedPct = (() => {
+    if(!socialFirstDate) return 0;
+    const total = Math.max(1, Math.ceil((new Date(socialDate)-new Date(socialFirstDate))/86400000));
+    const elapsed = Math.max(0, total - socialDaysLeft);
+    return Math.min(100, (elapsed / total) * 100);
+  })();
+  const socialStatus = socialPct >= 100 ? 'complete' : socialPct >= socialExpectedPct + 5 ? 'ahead' : socialPct >= socialExpectedPct - 10 ? 'ontrack' : socialPct >= socialExpectedPct - 25 ? 'behind' : 'danger';
+  const socialStatusTxt = socialPct >= 100 ? '✓ HIT' : socialStatus === 'ahead' ? 'AHEAD' : socialStatus === 'ontrack' ? 'ON TRACK' : socialStatus === 'behind' ? 'BEHIND' : 'OFF PACE';
+
+  cards.push(linearCard('social', '86×3 Social Reps', `${totApproaches}/${totCompliments}/${totConnections}`, 'A/C/N · min ' + socialMin + '/86 · ' + socialDaysLeft + 'd', socialPct, socialExpectedPct, socialStatusTxt, socialStatus));
+
+  el.innerHTML = `<div class="ns-grid">${cards.join('')}</div>`;
+}
+
+function circleCard(pillar, label, pct, centerVal, footLeft, status, statusClass){
+  const r = 50;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - Math.min(100, pct) / 100);
+  return `
+    <div class="ns-card ${pillar}">
+      <div class="ns-label">${esc(label)}</div>
+      <div class="ns-circle">
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle class="ns-circle-bg" cx="60" cy="60" r="${r}"/>
+          <circle class="ns-circle-fill" cx="60" cy="60" r="${r}" stroke-dasharray="${circ}" stroke-dashoffset="${offset}"/>
+        </svg>
+        <div class="ns-circle-text">
+          <div class="ns-circle-pct">${centerVal}</div>
+          <div class="ns-circle-sub">${Math.round(pct)}% done</div>
+        </div>
+      </div>
+      <div class="ns-foot">
+        <span>${esc(footLeft)}</span>
+        <span class="ns-status ${statusClass}">${esc(status)}</span>
+      </div>
+    </div>
+  `;
+}
+
+function linearCard(pillar, label, bigNum, sub, pct, expectedPct, status, statusClass){
+  return `
+    <div class="ns-card ${pillar}">
+      <div class="ns-label">${esc(label)}</div>
+      <div class="ns-linear">
+        <div class="ns-linear-num">${esc(bigNum)}</div>
+        <div class="ns-linear-sub">${esc(sub)}</div>
+        <div class="ns-linear-bar">
+          <div class="ns-linear-fill" style="width:${pct}%"></div>
+          ${expectedPct > 0 && expectedPct < 100 ? `<div class="ns-linear-pace" style="left:${expectedPct}%"></div>` : ''}
+        </div>
+      </div>
+      <div class="ns-foot">
+        <span>${Math.round(pct)}% done</span>
+        <span class="ns-status ${statusClass}">${esc(status)}</span>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DAILY TARGETS - Lower section of home
+// ═══════════════════════════════════════════════════════════
+function renderDailyTargets(){
+  const el = $('daily-targets');
+  if(!el) return;
+  const today = TODAY();
+  const cards = [];
+
+  // Body: calories + protein
+  const meals = S.meals[today] || [];
+  const cal = meals.reduce((s,m)=>s+(m.cal||0),0);
+  const prot = meals.reduce((s,m)=>s+(m.prot||0),0);
+  const calTgt = S.profile.calTarget || 4000;
+  const protTgt = S.profile.protTarget || 200;
+  const bodyDone = cal >= calTgt && prot >= protTgt;
+  const bodyStatus = bodyDone ? 'done' : (cal > 0 || prot > 0) ? 'partial' : 'zero';
+  cards.push(`
+    <div class="dt-card body">
+      <div class="dt-head">
+        <div class="dt-title">Body · Nutrition</div>
+        <div class="dt-status-inline ${bodyStatus}">${bodyDone ? '✓ Hit' : (cal > 0 || prot > 0) ? 'In progress' : 'Not started'}</div>
+      </div>
+      <div class="dt-bar-row">
+        <span class="dt-bar-label">Cal</span>
+        <div class="dt-bar-track"><div class="dt-bar-fill" style="width:${Math.min(100,(cal/calTgt)*100)}%"></div></div>
+        <span class="dt-bar-num">${cal} / ${calTgt}</span>
+      </div>
+      <div class="dt-bar-row">
+        <span class="dt-bar-label">Protein</span>
+        <div class="dt-bar-track"><div class="dt-bar-fill" style="width:${Math.min(100,(prot/protTgt)*100)}%"></div></div>
+        <span class="dt-bar-num">${prot}g / ${protTgt}g</span>
+      </div>
+    </div>
+  `);
+
+  // Money: daily target = (target - current) / days remaining
+  const sortedP = [...S.portfolio].sort((a,b) => a.ts - b.ts);
+  const currentVal = sortedP[sortedP.length-1]?.value || 5150;
+  const moneyTgt = S.profile.portfolioTarget || 10000;
+  const moneyDate = S.profile.portfolioTargetDate || '2026-08-01';
+  const moneyDaysLeft = Math.max(1, Math.ceil((new Date(moneyDate)-new Date(today))/86400000));
+  const dailyMoneyTgt = Math.max(0, (moneyTgt - currentVal) / moneyDaysLeft);
+  // Today's gain = today's portfolio entry minus yesterday's (if any)
+  const todaysP = sortedP.filter(p => p.date === today);
+  const yesterdaysP = sortedP.filter(p => p.date < today);
+  const lastBeforeToday = yesterdaysP[yesterdaysP.length-1];
+  const lastToday = todaysP[todaysP.length-1];
+  let todayGain = 0;
+  if(lastToday && lastBeforeToday){
+    todayGain = lastToday.value - lastBeforeToday.value;
+  }
+  const moneyDtPct = dailyMoneyTgt > 0 ? Math.min(100, Math.max(0, (todayGain / dailyMoneyTgt) * 100)) : 100;
+  const moneyDtStatus = todayGain >= dailyMoneyTgt ? 'done' : todayGain > 0 ? 'partial' : 'zero';
+  cards.push(`
+    <div class="dt-card money">
+      <div class="dt-head">
+        <div class="dt-title">Money · Daily €</div>
+        <div class="dt-status-inline ${moneyDtStatus}">${todayGain >= dailyMoneyTgt ? '✓ Hit' : todayGain > 0 ? 'Partial' : 'No update'}</div>
+      </div>
+      <div class="dt-bar-row">
+        <span class="dt-bar-label">Today</span>
+        <div class="dt-bar-track"><div class="dt-bar-fill" style="width:${moneyDtPct}%"></div></div>
+        <span class="dt-bar-num">${todayGain >= 0 ? '+' : ''}€${todayGain.toFixed(0)} / €${dailyMoneyTgt.toFixed(0)}</span>
+      </div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-top:6px">Note: portfolios don't grow linearly</div>
+    </div>
+  `);
+
+  // Business: 2h
+  const bizHrs = (S.money[today]?.hours || 0);
+  const bizTgt = S.profile.bizTarget || 2;
+  const bizDtStatus = bizHrs >= bizTgt ? 'done' : bizHrs > 0 ? 'partial' : 'zero';
+  cards.push(`
+    <div class="dt-card business">
+      <div class="dt-head">
+        <div class="dt-title">Business · Daily</div>
+        <div class="dt-status-inline ${bizDtStatus}">${bizHrs >= bizTgt ? '✓ Hit' : bizHrs > 0 ? 'In progress' : 'Not started'}</div>
+      </div>
+      <div class="dt-bar-row">
+        <span class="dt-bar-label">Hours</span>
+        <div class="dt-bar-track"><div class="dt-bar-fill" style="width:${Math.min(100,(bizHrs/bizTgt)*100)}%"></div></div>
+        <span class="dt-bar-num">${bizHrs.toFixed(1)}h / ${bizTgt}h</span>
+      </div>
+    </div>
+  `);
+
+  // GMAT: 50 problems
+  const gmatProb = S.cv[today]?.problems || 0;
+  const gmatTgt = S.profile.gmatDailyTarget || 50;
+  const gmatDtStatus = gmatProb >= gmatTgt ? 'done' : gmatProb > 0 ? 'partial' : 'zero';
+  cards.push(`
+    <div class="dt-card cv">
+      <div class="dt-head">
+        <div class="dt-title">GMAT · Daily</div>
+        <div class="dt-status-inline ${gmatDtStatus}">${gmatProb >= gmatTgt ? '✓ Hit' : gmatProb > 0 ? 'In progress' : 'Not started'}</div>
+      </div>
+      <div class="dt-bar-row">
+        <span class="dt-bar-label">Problems</span>
+        <div class="dt-bar-track"><div class="dt-bar-fill" style="width:${Math.min(100,(gmatProb/gmatTgt)*100)}%"></div></div>
+        <span class="dt-bar-num">${gmatProb} / ${gmatTgt}</span>
+      </div>
+    </div>
+  `);
+
+  // Social: 1 each
+  const todaySoc = S.social[today] || {};
+  const sa = todaySoc.approaches || 0;
+  const sc = todaySoc.compliments || 0;
+  const sn = todaySoc.connections || 0;
+  const taApp = S.profile.socialDailyApproaches || 1;
+  const taCmp = S.profile.socialDailyCompliments || 1;
+  const taCnn = S.profile.socialDailyConnections || 1;
+  const allSoc = sa >= taApp && sc >= taCmp && sn >= taCnn;
+  const socStatus = allSoc ? 'done' : (sa+sc+sn) > 0 ? 'partial' : 'zero';
+  cards.push(`
+    <div class="dt-card social">
+      <div class="dt-head">
+        <div class="dt-title">Social · Daily Minimums</div>
+        <div class="dt-status-inline ${socStatus}">${allSoc ? '✓ All hit' : (sa+sc+sn) > 0 ? 'In progress' : 'Not started'}</div>
+      </div>
+      <div class="dt-mini-grid">
+        <div class="dt-mini ${sa >= taApp ? 'done' : ''}"><div class="dt-mini-v">${sa}/${taApp}</div><div class="dt-mini-l">Approach</div></div>
+        <div class="dt-mini ${sc >= taCmp ? 'done' : ''}"><div class="dt-mini-v">${sc}/${taCmp}</div><div class="dt-mini-l">Compliment</div></div>
+        <div class="dt-mini ${sn >= taCnn ? 'done' : ''}"><div class="dt-mini-v">${sn}/${taCnn}</div><div class="dt-mini-l">Connection</div></div>
+      </div>
+    </div>
+  `);
+
+  el.innerHTML = `<div class="dt-grid">${cards.join('')}</div>`;
+}
+
 function renderOverview(){
   if(activeTab !== 'overview') return;
+
+  renderNorthStars();
+  renderDailyTargets();
 
   // Greeting
   const hour = new Date().getHours();
@@ -2186,56 +3572,6 @@ function renderOverview(){
   const bizHrs = (S.money[td]?.hours || 0);
   const cvProb = (S.cv[td]?.problems || 0);
   $('hero-sub').textContent = `${cal} cal · ${bizHrs.toFixed(1)}h business · ${cvProb} GMAT problems today`;
-
-  // Body card
-  const bWeight = S.body[td]?.weight;
-  $('ph-body-score').textContent = bWeight ? bWeight.toFixed(1) : '—';
-  $('ph-body-desc').textContent = bWeight ? `${bWeight.toFixed(1)} kg · target ${S.profile.targetWeight}` : 'Log weight today';
-  const bStreak = getStreak('body', d => S.body[d] && Object.keys(S.body[d]).length > 0);
-  $('ph-body-streak').textContent = bStreak+'d';
-
-  // Social card
-  const sRating = S.social[td]?.rating;
-  $('ph-social-score').textContent = sRating != null ? sRating : '—';
-  $('ph-social-desc').textContent = sRating != null ? `Rating today · ${S.social[td]?.approaches||0} approaches` : 'Rate your day';
-  const sStreak = getStreak('social', d => S.social[d] && S.social[d].rating != null);
-  $('ph-social-streak').textContent = sStreak+'d';
-
-  // Money card (portfolio)
-  const sortedP = [...S.portfolio].sort((a,b) => a.ts - b.ts);
-  const latestP = sortedP[sortedP.length - 1];
-  if(latestP){
-    $('ph-money-score').textContent = '€' + latestP.value.toLocaleString('en-US',{maximumFractionDigits:0});
-    if(sortedP.length >= 2){
-      const prev = sortedP[sortedP.length - 2];
-      const delta = latestP.value - prev.value;
-      const pct = (delta / prev.value) * 100;
-      const sign = delta >= 0 ? '+' : '';
-      $('ph-money-trend').textContent = `${sign}${pct.toFixed(1)}%`;
-      $('ph-money-trend').style.color = delta >= 0 ? 'var(--money)' : 'var(--danger)';
-      $('ph-money-desc').textContent = `${sign}€${delta.toFixed(0)} vs last`;
-    } else {
-      $('ph-money-trend').textContent = 'baseline';
-      $('ph-money-desc').textContent = 'First entry logged';
-    }
-  } else {
-    $('ph-money-score').textContent = '€—';
-    $('ph-money-trend').textContent = 'no data';
-    $('ph-money-desc').textContent = 'Log your portfolio';
-  }
-
-  // Business card (hours)
-  $('ph-biz-score').textContent = bizHrs.toFixed(1);
-  $('ph-biz-desc').textContent = `${bizHrs.toFixed(1)}h / ${S.profile.bizTarget}h target`;
-  const bizStreak = getStreak('money', d => S.money[d] && S.money[d].hours >= S.profile.bizTarget);
-  $('ph-biz-streak').textContent = bizStreak+'d';
-
-  // CV card
-  $('ph-cv-score').textContent = cvProb;
-  const cvAcc = S.cv[td]?.problems > 0 ? Math.round((S.cv[td].correct/S.cv[td].problems)*100) : null;
-  $('ph-cv-desc').textContent = cvAcc!=null ? `${cvProb} problems · ${cvAcc}% acc` : `${cvProb} problems today`;
-  const cStreak = getStreak('cv', d => S.cv[d] && S.cv[d].problems > 0);
-  $('ph-cv-streak').textContent = cStreak+'d';
 
   // Today's Focus - events + CV milestones in next 7 days
   const tt = $('today-tasks');
@@ -2301,63 +3637,7 @@ function renderOverview(){
       </div>
     `).join('');
   }
-
-  // Overview chart - daily activity score
-  renderOverviewChart();
 }
-function renderOverviewChart(){
-  const ctx = $('overview-chart');
-  if(!ctx) return;
-  const dates = getNDaysBack(7);
-  const bodyD = dates.map(d => {
-    const m = S.meals[d] || [];
-    const cal = m.reduce((s,x)=>s+(x.cal||0),0);
-    return Math.min(100, (cal / S.profile.calTarget) * 100);
-  });
-  const socialD = dates.map(d => {
-    const r = S.social[d]?.rating;
-    return r != null ? r * 10 : 0;
-  });
-  const moneyD = dates.map(d => {
-    const h = S.money[d]?.hours || 0;
-    return Math.min(100, (h / S.profile.bizTarget) * 100);
-  });
-  const cvD = dates.map(d => {
-    const p = S.cv[d]?.problems || 0;
-    return Math.min(100, (p / 30) * 100); // 30 problems = 100%
-  });
-
-  if(charts.overview) charts.overview.destroy();
-  charts.overview = new Chart(ctx, {
-    type:'line',
-    data:{
-      labels: dates.map(d => dayName(d)),
-      datasets:[
-        { label:'Body', data:bodyD, borderColor:'#fb923c', backgroundColor:'transparent', borderWidth:2, tension:.3, pointRadius:2 },
-        { label:'Social', data:socialD, borderColor:'#f0abfc', backgroundColor:'transparent', borderWidth:2, tension:.3, pointRadius:2 },
-        { label:'Business', data:moneyD, borderColor:'#4ade80', backgroundColor:'transparent', borderWidth:2, tension:.3, pointRadius:2 },
-        { label:'CV', data:cvD, borderColor:'#7dd3fc', backgroundColor:'transparent', borderWidth:2, tension:.3, pointRadius:2 },
-      ]
-    },
-    options: {
-      ...chartOpts(true, 100),
-      plugins: {
-        legend: {
-          display: true,
-          position: 'bottom',
-          labels: {
-            font:{ family:"'JetBrains Mono', monospace", size:10 },
-            color: getCSSVar('--text-2'),
-            usePointStyle: true,
-            boxWidth: 6,
-            padding: 14,
-          }
-        }
-      }
-    }
-  });
-}
-
 // ═══════════════════════════════════════════════════════════
 // CHART HELPERS
 // ═══════════════════════════════════════════════════════════
@@ -2611,11 +3891,27 @@ function saveSettings(){
   S.profile.name = $('set-name').value || 'Oto';
   S.profile.weight = parseFloat($('set-weight').value) || 74;
   S.profile.targetWeight = parseFloat($('set-target-weight').value) || 79;
-  S.profile.calTarget = parseInt($('set-cal').value) || 3000;
-  S.profile.protTarget = parseInt($('set-prot').value) || 180;
+  S.profile.calTarget = parseInt($('set-cal').value) || 4000;
+  S.profile.protTarget = parseInt($('set-prot').value) || 200;
   S.profile.bizTarget = parseFloat($('set-biz').value) || 2;
   save();
   toast('Profile saved');
+  renderAll();
+}
+function saveGoalsSettings(){
+  S.profile.bulkTargetWeight = parseFloat($('set-bulk-w').value) || 75;
+  S.profile.bulkTargetDate = $('set-bulk-d').value || '2026-05-17';
+  S.profile.cutTargetWeight = parseFloat($('set-cut-w').value) || 70;
+  S.profile.cutTargetDate = $('set-cut-d').value || '2026-08-01';
+  S.profile.portfolioTarget = parseFloat($('set-port-tgt').value) || 10000;
+  S.profile.portfolioTargetDate = $('set-port-d').value || '2026-08-01';
+  S.profile.gmatDailyTarget = parseInt($('set-gmat-tgt').value) || 50;
+  S.profile.bizTarget = parseFloat($('set-biz-tgt').value) || 2;
+  S.profile.socialDailyApproaches = parseInt($('set-soc-app').value) || 1;
+  S.profile.socialDailyCompliments = parseInt($('set-soc-cmp').value) || 1;
+  S.profile.socialDailyConnections = parseInt($('set-soc-cnn').value) || 1;
+  save();
+  toast('Goals saved');
   renderAll();
 }
 function saveApiKey(){
@@ -2631,6 +3927,17 @@ function loadSettingsForm(){
   $('set-cal').value = S.profile.calTarget;
   $('set-prot').value = S.profile.protTarget;
   $('set-biz').value = S.profile.bizTarget;
+  $('set-bulk-w').value = S.profile.bulkTargetWeight || 75;
+  $('set-bulk-d').value = S.profile.bulkTargetDate || '2026-05-17';
+  $('set-cut-w').value = S.profile.cutTargetWeight || 70;
+  $('set-cut-d').value = S.profile.cutTargetDate || '2026-08-01';
+  $('set-port-tgt').value = S.profile.portfolioTarget || 10000;
+  $('set-port-d').value = S.profile.portfolioTargetDate || '2026-08-01';
+  $('set-gmat-tgt').value = S.profile.gmatDailyTarget || 50;
+  $('set-biz-tgt').value = S.profile.bizTarget || 2;
+  $('set-soc-app').value = S.profile.socialDailyApproaches || 1;
+  $('set-soc-cmp').value = S.profile.socialDailyCompliments || 1;
+  $('set-soc-cnn').value = S.profile.socialDailyConnections || 1;
   $('set-apikey').value = S.settings.apiKey || '';
   $('set-jbkey').value = S.settings.jbKey || '';
   $('set-jbbin').value = S.settings.jbBinId || '';
