@@ -1333,8 +1333,8 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
       <button class="btn" style="flex:1" onclick="testT212()">Test connection</button>
     </div>
 
-    <div class="ct">Cloud Sync (jsonbin.io)</div>
-    <div class="info">For cross-device sync. Free at jsonbin.io. Get Master Key from your account → API Keys</div>
+    <div class="ct">Cloud Sync (jsonbin.io) · AUTO</div>
+    <div class="info">Auto-syncs across devices. Sign up free at jsonbin.io → API Keys → copy Master Key. Paste below + tap "Backup now" once. After that, every change auto-syncs within 3s, and the app pulls latest data on every open.</div>
     <div class="fg"><label>jsonbin Master Key</label><input type="password" id="set-jbkey" placeholder="$2a$…"></div>
     <div class="fg"><label>Bin ID (auto-created on first sync)</label><input type="text" id="set-jbbin" placeholder="auto"></div>
     <div class="row gap8 mb16">
@@ -1385,7 +1385,13 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
 // STATE
 // ═══════════════════════════════════════════════════════════
 const STORE_KEY = 'oto_os_v1';
-const TODAY = () => new Date().toISOString().slice(0,10);
+const TODAY = () => {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${yyyy}-${mm}-${dd}`;
+};
 const NOW = () => Date.now();
 
 const DEFAULT_STATE = {
@@ -1446,8 +1452,77 @@ function deepMerge(target, source){
   return target;
 }
 function save(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }
+  try{
+    S._lastModified = Date.now();
+    localStorage.setItem(STORE_KEY, JSON.stringify(S));
+    scheduleAutoSync();
+  }
   catch(e){ toast('Save failed: '+e.message, 'err'); }
+}
+
+let _autoSyncTimer = null;
+function scheduleAutoSync(){
+  if(!S.settings.jbKey || !S.settings.jbBinId) return; // not configured
+  if(_autoSyncTimer) clearTimeout(_autoSyncTimer);
+  _autoSyncTimer = setTimeout(() => { autoSyncPush(); }, 3000); // debounce 3s
+}
+
+async function autoSyncPush(){
+  if(!S.settings.jbKey || !S.settings.jbBinId) return;
+  setSyncStatus('syncing');
+  try{
+    const resp = await fetch(`https://api.jsonbin.io/v3/b/${S.settings.jbBinId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type':'application/json',
+        'X-Master-Key': S.settings.jbKey,
+      },
+      body: JSON.stringify(S)
+    });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    setSyncStatus('synced');
+  } catch(e){
+    setSyncStatus('error');
+    console.error('Auto-sync push failed:', e.message);
+  }
+}
+
+async function autoSyncPull(){
+  if(!S.settings.jbKey || !S.settings.jbBinId) return false;
+  setSyncStatus('syncing');
+  try{
+    const resp = await fetch(`https://api.jsonbin.io/v3/b/${S.settings.jbBinId}/latest`, {
+      headers: { 'X-Master-Key': S.settings.jbKey }
+    });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    const data = await resp.json();
+    const remote = data.record;
+    const remoteModified = remote._lastModified || 0;
+    const localModified = S._lastModified || 0;
+    if(remoteModified > localModified){
+      // Remote is newer — pull it. But preserve local credentials in case they're newer.
+      const kept = {
+        apiKey: S.settings.apiKey,
+        jbKey: S.settings.jbKey,
+        jbBinId: S.settings.jbBinId,
+        t212ProxyUrl: S.settings.t212ProxyUrl,
+        t212ProxySecret: S.settings.t212ProxySecret,
+        theme: S.settings.theme
+      };
+      S = remote;
+      S.settings = { ...S.settings, ...kept };
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch(e){}
+      setSyncStatus('synced');
+      return true;
+    } else {
+      setSyncStatus('synced');
+      return false;
+    }
+  } catch(e){
+    setSyncStatus('error');
+    console.error('Auto-sync pull failed:', e.message);
+    return false;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1467,7 +1542,10 @@ function getNDaysBack(n){
   for(let i=n-1; i>=0; i--){
     const d = new Date();
     d.setDate(d.getDate()-i);
-    out.push(d.toISOString().slice(0,10));
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    out.push(`${yyyy}-${mm}-${dd}`);
   }
   return out;
 }
@@ -3749,8 +3827,38 @@ function init(){
   // Show/hide API key banner
   $('no-key-banner').style.display = S.settings.apiKey ? 'none' : 'block';
 
-  // First render
+  // First render with local data
   renderAll();
+
+  // Then pull from cloud if configured (will re-render if newer data found)
+  if(S.settings.jbKey && S.settings.jbBinId){
+    autoSyncPull().then(updated => {
+      if(updated){
+        renderAll();
+        toast('✓ Synced from cloud');
+      }
+    });
+  }
+
+  // Refresh from cloud when window regains focus (user comes back to tab)
+  window.addEventListener('focus', () => {
+    if(S.settings.jbKey && S.settings.jbBinId){
+      autoSyncPull().then(updated => {
+        if(updated){
+          renderAll();
+        }
+      });
+    }
+  });
+
+  // Periodic background sync every 60 seconds while app is open
+  setInterval(() => {
+    if(document.visibilityState === 'visible' && S.settings.jbKey && S.settings.jbBinId){
+      autoSyncPull().then(updated => {
+        if(updated) renderAll();
+      });
+    }
+  }, 60000);
 }
 
 function seedCVMilestones(){
