@@ -651,20 +651,22 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
 }
 .cal-nav:hover{border-color:var(--border-2);background:var(--surface-3)}
 .cal-dows{
-  display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;
+  display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:6px;
 }
 .cal-dows>div{
   text-align:center;font-family:var(--mono);font-size:9px;font-weight:600;
   text-transform:uppercase;letter-spacing:.1em;color:var(--text-3);padding:4px 0;
+  min-width:0;
 }
 .cal-grid{
-  display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
+  display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;
 }
 .cal-cell{
   aspect-ratio:1;background:var(--surface-2);border:1px solid var(--border);
   border-radius:var(--r-sm);padding:6px 4px 4px;cursor:pointer;
   display:flex;flex-direction:column;align-items:flex-start;
   position:relative;transition:all .15s;min-height:54px;
+  overflow:hidden;min-width:0;box-sizing:border-box;
 }
 .cal-cell:hover{border-color:var(--border-2);background:var(--surface-3)}
 .cal-cell.other-month{opacity:.3}
@@ -673,15 +675,24 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
 .cal-cell.has-events::after{content:'';position:absolute;bottom:4px;right:4px;width:5px;height:5px;background:var(--accent);border-radius:50%}
 .cal-num{
   font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text-2);line-height:1;
+  flex-shrink:0;
 }
 .cal-dots{
   display:flex;gap:2px;margin-top:4px;flex-wrap:wrap;align-items:center;
+  max-width:100%;overflow:hidden;
 }
 .cal-dot{
-  width:5px;height:5px;border-radius:50%;display:inline-block;
+  width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0;
 }
 .cal-more{
   font-family:var(--mono);font-size:8px;color:var(--text-3);margin-left:1px;
+}
+.cal-header-row{
+  display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:6px;
+}
+.cal-header-cell{
+  font-family:var(--mono);font-size:9px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.08em;text-align:center;padding:4px 0;
 }
 .cal-legend{
   display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:14px;
@@ -895,58 +906,26 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
       <div class="card">
         <div class="ct">Quick Log</div>
         <div class="fg"><label>Weight (kg)</label><input type="number" id="b-weight-in" step="0.1" placeholder="—"></div>
-        <div class="g2">
-          <div class="fg"><label>Sleep (h)</label><input type="number" id="b-sleep-in" step="0.5" placeholder="—"></div>
-          <div class="fg"><label>Water (L)</label><input type="number" id="b-water-in" step="0.5" placeholder="—"></div>
-        </div>
+        <div class="fg"><label>Sleep (h)</label><input type="number" id="b-sleep-in" step="0.5" placeholder="—"></div>
         <button class="btn primary wf" onclick="saveBodyDaily()">Save daily metrics</button>
       </div>
 
       <div class="card">
         <div class="ct">🎙 AI Meal Logger <span class="pill">voice → macros</span></div>
-        <div class="info">Tap mic, say everything you ate (e.g. "two eggs, oatmeal with banana, protein shake, chicken salad with rice for lunch"). AI extracts macros and logs each meal automatically.</div>
+        <div class="info">Tap mic, say everything you ate (e.g. "two eggs, oatmeal with banana, protein shake, chicken salad with rice for lunch"). AI extracts macros and logs each meal automatically. <b>Tip:</b> include portion sizes for accuracy (e.g. "200g chicken, 150g rice").</div>
         <div class="fg"><label>Describe what you ate</label><div class="inp-row"><textarea id="b-ai-meal" rows="3" placeholder="Speak or type all your meals…"></textarea><button class="vbtn" id="b-ai-mic" onclick="voiceInput('b-ai-meal',this)">🎙</button></div></div>
         <button class="btn primary wf" onclick="aiLogMeals()" id="b-ai-btn">⚡ Calculate &amp; log meals</button>
-      </div>
-
-      <div class="card">
-        <div class="ct">Manual Add Meal</div>
-        <div class="fg"><label>Meal</label><input type="text" id="b-meal-name" placeholder="e.g. Chicken &amp; rice"></div>
-        <div class="g2">
-          <div class="fg"><label>Calories</label><input type="number" id="b-meal-cal" placeholder="0"></div>
-          <div class="fg"><label>Protein (g)</label><input type="number" id="b-meal-prot" placeholder="0"></div>
-        </div>
-        <button class="btn wf" onclick="addMeal()">Log meal</button>
       </div>
     </div>
 
     <div>
       <div class="card card-pillar card-body">
-        <div class="ct">Gym Week · 5 sessions</div>
-        <div class="info" style="margin-bottom:0">Goal: hit each session at least once per week. Resets every Monday.</div>
-        <div class="gym-week" id="gym-week-grid"></div>
-        <div class="gym-week-meta">
-          <span id="gym-week-label">Week of —</span>
-          <span id="gym-week-status">0 / 5 done</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="ct">Gym Sessions This Week <span class="pill" id="gym-week-label">—</span></div>
-        <div class="info">Goal: 1× of each per week. Tap to mark complete for today.</div>
+        <div class="ct">Weekly Training <span class="pill" id="gym-sessions-pill">0/5</span></div>
+        <div class="info">Goal: 1× each per week (Push, Pull, Legs, Abs, Stretch). Resets every Monday automatically. Tap a session to mark complete for today.</div>
         <div class="gym-grid" id="gym-sessions-grid"></div>
-      </div>
-
-      <div class="card">
-        <div class="ct">Training Today</div>
-        <div class="row between mb12">
-          <div><div style="font-weight:600">💪 Gym</div><div class="stat-l" style="margin-top:2px">Did you train?</div></div>
-          <div class="tgl-w" onclick="toggleBody('gym')"><div class="tgl" id="b-gym-tgl"><div class="tgl-th"></div></div></div>
-        </div>
-        <div id="b-gym-notes-sec" style="display:none" class="fg"><label>Notes</label><div class="inp-row"><textarea id="b-gym-notes" rows="2" placeholder="Push day, bench 80kg…"></textarea><button class="vbtn" onclick="voiceInput('b-gym-notes',this)">🎙</button></div></div>
         <div class="divider"></div>
-        <div class="row between mb12">
-          <div><div style="font-weight:600">🏃 Run / Futsal</div><div class="stat-l" style="margin-top:2px">Cardio session</div></div>
+        <div class="row between mb8">
+          <div><div style="font-weight:600">🏃 Cardio · Run / Futsal</div><div class="stat-l" style="margin-top:2px">Today's cardio session</div></div>
           <div class="tgl-w" onclick="toggleBody('cardio')"><div class="tgl" id="b-cardio-tgl"><div class="tgl-th"></div></div></div>
         </div>
         <div id="b-cardio-sec" style="display:none">
@@ -954,8 +933,8 @@ textarea{resize:vertical;min-height:60px;font-family:var(--sans)}
             <div class="fg"><label>Distance (km)</label><input type="number" id="b-cardio-km" step="0.1" placeholder="0"></div>
             <div class="fg"><label>Duration (min)</label><input type="number" id="b-cardio-min" placeholder="0"></div>
           </div>
+          <button class="btn primary wf" onclick="saveBodyTraining()">Save cardio</button>
         </div>
-        <button class="btn primary wf mt8" onclick="saveBodyTraining()">Save training</button>
       </div>
 
       <div class="card">
@@ -1667,23 +1646,17 @@ function saveBodyDaily(){
   const day = ensureBodyDay(d);
   const w = parseFloat($('b-weight-in').value);
   const sl = parseFloat($('b-sleep-in').value);
-  const wa = parseFloat($('b-water-in').value);
   if(!isNaN(w)) day.weight = w;
   if(!isNaN(sl)) day.sleep = sl;
-  if(!isNaN(wa)) day.water = wa;
   save();
   renderBody();
   toast('Body metrics saved');
-  $('b-weight-in').value='';$('b-sleep-in').value='';$('b-water-in').value='';
+  $('b-weight-in').value='';$('b-sleep-in').value='';
 }
 function toggleBody(kind){
   const d = getActiveDate('body');
   const day = ensureBodyDay(d);
-  if(kind==='gym'){
-    day.gym = !day.gym;
-    $('b-gym-tgl').classList.toggle('on', day.gym);
-    $('b-gym-notes-sec').style.display = day.gym ? 'block' : 'none';
-  } else if(kind==='cardio'){
+  if(kind==='cardio'){
     day.cardio = !day.cardio;
     $('b-cardio-tgl').classList.toggle('on', day.cardio);
     $('b-cardio-sec').style.display = day.cardio ? 'block' : 'none';
@@ -1693,7 +1666,6 @@ function toggleBody(kind){
 function saveBodyTraining(){
   const d = getActiveDate('body');
   const day = ensureBodyDay(d);
-  if(day.gym) day.gymNotes = $('b-gym-notes').value;
   if(day.cardio){
     day.cardioKm = parseFloat($('b-cardio-km').value) || 0;
     day.cardioMin = parseInt($('b-cardio-min').value) || 0;
@@ -1742,7 +1714,9 @@ function renderGymGrid(){
   if(!grid) return;
   const wk = getWeekKey(TODAY());
   const wkData = (S.gymSessions && S.gymSessions[wk]) || {};
-  $('gym-week-label').textContent = wk + ' · ' + Object.keys(wkData).length + '/5';
+  const doneCount = Object.keys(wkData).length;
+  const pill = $('gym-sessions-pill');
+  if(pill) pill.textContent = doneCount + '/5';
   grid.innerHTML = GYM_TYPES.map(t => {
     const done = wkData[t.key];
     return `<div class="gym-cell ${done?'done':''}" onclick="toggleGymSession('${t.key}')">
@@ -1929,14 +1903,13 @@ function renderBody(){
   $('b-prot-pl').textContent = `${totProt}g / ${S.profile.protTarget}g`;
   $('b-prot-pf').style.width = pct(totProt, S.profile.protTarget)+'%';
 
-  $('b-gym-tgl').classList.toggle('on', !!day.gym);
-  $('b-gym-notes-sec').style.display = day.gym ? 'block' : 'none';
-  if(day.gymNotes) $('b-gym-notes').value = day.gymNotes;
-
-  $('b-cardio-tgl').classList.toggle('on', !!day.cardio);
-  $('b-cardio-sec').style.display = day.cardio ? 'block' : 'none';
-  if(day.cardioKm) $('b-cardio-km').value = day.cardioKm;
-  if(day.cardioMin) $('b-cardio-min').value = day.cardioMin;
+  const cardioTgl = $('b-cardio-tgl');
+  if(cardioTgl){
+    cardioTgl.classList.toggle('on', !!day.cardio);
+    $('b-cardio-sec').style.display = day.cardio ? 'block' : 'none';
+    if(day.cardioKm) $('b-cardio-km').value = day.cardioKm;
+    if(day.cardioMin) $('b-cardio-min').value = day.cardioMin;
+  }
 
   // Meals list
   const ml = $('b-meals-list');
@@ -2581,12 +2554,14 @@ function renderCV(){
   $('c-ttp-acc').textContent = day.problems > 0 ? Math.round((day.correct/day.problems)*100) : '—';
   $('c-ttp-time').textContent = day.time || 0;
 
-  // CV goals
+  // CV goals - sort by deadline ascending (sooner first), no-deadline last
   const gl = $('cv-goals-list');
   const active = S.cvGoals.filter(g => !g.done).sort((a,b) => {
-    const pri = {high:0, med:1, low:2};
-    if(pri[a.priority] !== pri[b.priority]) return pri[a.priority]-pri[b.priority];
-    return (a.deadline || '9999').localeCompare(b.deadline || '9999');
+    // Goals with no deadline go last
+    if(!a.deadline && !b.deadline) return 0;
+    if(!a.deadline) return 1;
+    if(!b.deadline) return -1;
+    return a.deadline.localeCompare(b.deadline);
   });
   $('cv-goals-count').textContent = active.length;
   if(active.length === 0 && S.cvGoals.length === 0){
@@ -3368,12 +3343,51 @@ function renderOverview(){
   const cvProb = (S.cv[td]?.problems || 0);
   $('hero-sub').textContent = `${cal} cal · ${bizHrs.toFixed(1)}h business · ${cvProb} GMAT problems today`;
 
-  // Today's Focus - events + CV milestones in next 7 days
+  // Today's Focus - events + CV milestones HAPPENING TODAY ONLY
   const tt = $('today-tasks');
   const today = TODAY();
-  const nearEvents = S.events.filter(e => {
+  const todayEvents = S.events.filter(e => e.date === today).map(e => ({
+    type: 'event',
+    title: e.title,
+    date: e.date,
+    days: 0,
+    category: e.category,
+    time: e.time,
+    id: e.id
+  }));
+  const todayGoals = S.cvGoals.filter(g => !g.done && g.deadline === today)
+    .map(g => ({ type:'goal', ...g, days: 0 }));
+  const todayItems = [...todayEvents, ...todayGoals];
+  if(todayItems.length === 0){
+    tt.innerHTML = '<div class="empty">Nothing scheduled today</div>';
+  } else {
+    tt.innerHTML = todayItems.map(item => {
+      if(item.type === 'event'){
+        return `<div class="li-item">
+          <div class="li-main">
+            <div class="li-title">${esc(item.title)}</div>
+            <div class="li-sub">today${item.time?' · '+item.time:''} · ${categoryLabel(item.category)}</div>
+          </div>
+          <span class="badge ${categoryBadge(item.category)}">${categoryLabel(item.category)}</span>
+        </div>`;
+      } else {
+        return `<div class="li-item ${item.done?'done':''}">
+          <div class="cb ${item.done?'on':''}" onclick="event.stopPropagation();toggleCVGoal(${item.id});renderOverview()"></div>
+          <div class="li-main">
+            <div class="li-title">${esc(item.title)}</div>
+            <div class="li-sub">today · CV milestone</div>
+          </div>
+          <span class="badge ${item.priority==='high'?'high':item.priority==='med'?'med':'low'}">${item.priority}</span>
+        </div>`;
+      }
+    }).join('');
+  }
+
+  // Upcoming - all future events + milestones, ordered by date (chronological)
+  const um = $('upcoming-milestones');
+  const futureEvents = S.events.filter(e => {
     const days = Math.ceil((new Date(e.date)-new Date(today))/86400000);
-    return days >= 0 && days <= 7;
+    return days > 0;
   }).map(e => ({
     type: 'event',
     title: e.title,
@@ -3383,54 +3397,32 @@ function renderOverview(){
     time: e.time,
     id: e.id
   }));
-  const nearGoals = S.cvGoals.filter(g => !g.done && g.deadline)
+  const futureGoals = S.cvGoals.filter(g => !g.done && g.deadline)
     .map(g => ({ type:'goal', ...g, days: Math.ceil((new Date(g.deadline)-new Date(today))/86400000) }))
-    .filter(g => g.days >= 0 && g.days <= 7);
-  const upcoming = [...nearEvents, ...nearGoals].sort((a,b) => a.days - b.days);
-  if(upcoming.length === 0){
-    tt.innerHTML = '<div class="empty">Nothing scheduled in next 7 days</div>';
+    .filter(g => g.days > 0);
+  const futureItems = [...futureEvents, ...futureGoals].sort((a,b) => a.days - b.days);
+  if(futureItems.length === 0){
+    um.innerHTML = '<div class="empty">No upcoming events or milestones</div>';
   } else {
-    tt.innerHTML = upcoming.map(item => {
+    um.innerHTML = futureItems.slice(0, 10).map(item => {
       if(item.type === 'event'){
         return `<div class="li-item">
           <div class="li-main">
             <div class="li-title">${esc(item.title)}</div>
-            <div class="li-sub">${item.days===0?'today':item.days===1?'tomorrow':item.days+'d'}${item.time?' · '+item.time:''} · ${categoryLabel(item.category)}</div>
+            <div class="li-sub">${item.days===1?'tomorrow':item.days+'d'} · ${fmtDate(item.date)}${item.time?' · '+item.time:''} · ${categoryLabel(item.category)}</div>
           </div>
           <span class="badge ${categoryBadge(item.category)}">${categoryLabel(item.category)}</span>
         </div>`;
       } else {
-        return `<div class="li-item ${item.done?'done':''}">
-          <div class="cb ${item.done?'on':''}" onclick="event.stopPropagation();toggleCVGoal(${item.id});renderOverview()"></div>
+        return `<div class="li-item">
           <div class="li-main">
             <div class="li-title">${esc(item.title)}</div>
-            <div class="li-sub">${item.days===0?'today':item.days===1?'tomorrow':item.days+'d'} · CV milestone</div>
+            <div class="li-sub">${item.days===1?'tomorrow':item.days+'d'} · ${fmtDate(item.deadline)} · CV milestone</div>
           </div>
           <span class="badge ${item.priority==='high'?'high':item.priority==='med'?'med':'low'}">${item.priority}</span>
         </div>`;
       }
     }).join('');
-  }
-
-  // Upcoming milestones (>7d)
-  const um = $('upcoming-milestones');
-  const longTerm = S.cvGoals.filter(g => !g.done && g.deadline)
-    .map(g => ({ ...g, days: Math.ceil((new Date(g.deadline)-new Date())/86400000) }))
-    .filter(g => g.days > 7)
-    .sort((a,b) => a.days - b.days)
-    .slice(0, 5);
-  if(longTerm.length === 0){
-    um.innerHTML = '<div class="empty">No long-term milestones set</div>';
-  } else {
-    um.innerHTML = longTerm.map(g => `
-      <div class="li-item">
-        <div class="li-main">
-          <div class="li-title">${esc(g.title)}</div>
-          <div class="li-sub">${g.days}d · ${fmtDate(g.deadline)}</div>
-        </div>
-        <span class="badge cv">${g.priority}</span>
-      </div>
-    `).join('');
   }
 }
 // ═══════════════════════════════════════════════════════════
